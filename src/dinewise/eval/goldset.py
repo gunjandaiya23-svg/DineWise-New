@@ -64,7 +64,7 @@ def facet_score(row: pd.Series, facet: str) -> tuple[int, str]:
         return 1, "constraints only"
 
     if facet == "ranking":
-        if row.get("price_range") is not None and int(row["price_range"]) <= 2 and float(row["stars"]) >= 4.0:
+        if pd.notna(row.get("price_range")) and int(row["price_range"]) <= 2 and float(row["stars"]) >= 4.0:
             return 2, "evidence: cheap and highly rated"
         return 1, "constraints only"
 
@@ -76,7 +76,7 @@ def _sort_key(row: pd.Series, facet: str) -> tuple:
     rating = float(row.get("stars") or 0)
     reviews = int(row.get("review_count") or 0)
     price = row.get("price_range")
-    cheap_bonus = 1 if (price is not None and int(price) <= 2) else 0
+    cheap_bonus = 1 if (pd.notna(price) and int(price) <= 2) else 0
     return (-score, -rating, -reviews, -cheap_bonus, str(row.get("business_id")))
 
 

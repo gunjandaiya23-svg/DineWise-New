@@ -40,3 +40,6 @@ results/figures/*.png
 # OS
 .DS_Store
 Thumbs.db
+
+# Disposable runtime logs
+results/logs/

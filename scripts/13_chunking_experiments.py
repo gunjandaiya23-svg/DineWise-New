@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from dinewise.config import data_path, load_config  # noqa: E402
 from dinewise.eval.metrics import evaluate_ranking, mean_metrics  # noqa: E402
-from dinewise.rag.bm25_index import build_bm25, save_bm25  # noqa: E402
+from dinewise.rag.bm25_index import build_bm25, load_bm25, save_bm25  # noqa: E402
 from dinewise.rag.chunking import (  # noqa: E402
     TokenChunker,
     build_chunks,
@@ -95,6 +95,8 @@ def build_config(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=None)
+    parser.add_argument("--reuse-indexes", action="store_true",
+                        help="evaluate existing C1-C4 indexes without rebuilding")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
@@ -120,9 +122,23 @@ def main() -> int:
     details: dict[str, list[dict]] = {}
     for name, settings in cfg["chunking"]["configs"].items():
         print(f"building {name} ({settings['size']}/{settings['overlap']}) ...")
-        built = build_config(
-            cfg, name, settings, restaurants, profiles_text, tokenizer, encoder
-        )
+        if args.reuse_indexes:
+            index_dir = data_path(cfg, "index_dir", "faiss", name)
+            reused_chunks = pd.read_parquet(index_dir / "chunks.parquet")
+            built = {
+                "chunks": reused_chunks,
+                "index": faiss.read_index(str(index_dir / "index.faiss")),
+                "bm25": load_bm25(cfg, name),
+                "report": {**contamination_report(reused_chunks),
+                           "config": name, "size": settings["size"], "overlap": settings["overlap"],
+                           "mean_tokens": float(reused_chunks["token_count"].mean()),
+                           "index_bytes": (index_dir / "index.faiss").stat().st_size,
+                           "seconds": json.loads((index_dir / "index_meta.json").read_text()).get("embed_seconds", 0)},
+            }
+        else:
+            built = build_config(
+                cfg, name, settings, restaurants, profiles_text, tokenizer, encoder
+            )
         chunks = built["chunks"]
         retriever = Retriever(
             model=encoder,
@@ -156,6 +172,7 @@ def main() -> int:
     run_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "experiment": "E5",
+        "corpus": json.loads(data_path(cfg, "processed_dir", "corpus.json").read_text()),
         "retrieval_mode": "hybrid",
         "label_source": "silver_rubric_v1",
         "rows": rows,

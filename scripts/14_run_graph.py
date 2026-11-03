@@ -42,7 +42,7 @@ def main() -> int:
     results = []
     for query_id, facet, query in ALL_QUERIES:
         started = time.perf_counter()
-        state = run_query(graph, query, profile={"city": "Philadelphia"})
+        state = run_query(graph, query)
         elapsed = time.perf_counter() - started
         results.append(
             {
@@ -73,6 +73,7 @@ def main() -> int:
         )
 
     summary = {
+        "corpus": json.loads(data_path(cfg, "processed_dir", "corpus.json").read_text()),
         "mode": "llm" if args.llm else "template",
         "queries": len(results),
         "answered": sum(

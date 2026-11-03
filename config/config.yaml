@@ -14,35 +14,25 @@ paths:
   audit_dir: results/tables
 
 # --- Corpus -----------------------------------------------------------------
-# Minimal phase: one city and 500 restaurants, sorted by review_count.
-# Full study corpus (see docs/04-dataset.md): the five cities below, no limit.
+# Five-city study corpus, with no pilot cap.
 corpus:
   cities:
     - Philadelphia
-  heldout_cities:
-    - Nashville
-    - Reno
-  limit: 500
+    - Indianapolis
+    - Tampa
+    - New Orleans
+    - Tucson
+  limit: null
   sort_by: review_count
   sort_desc: true
-  min_reviews: 10
-  require_food_service: true
-  max_evidence_per_restaurant: 120
-
-# Full study corpus, for switching later:
-#   cities: [Philadelphia, Indianapolis, Tampa, New Orleans, Tucson]
-#   limit: null
 
 # --- Documents --------------------------------------------------------------
 docs:
   profile_file: restaurant_profiles.txt
-  review_pdf: customer_review_insights.pdf
-  policy_docx: dining_preferences.docx
-  pdf_cache: true
 
 # --- Chunking ---------------------------------------------------------------
 chunking:
-  active: C3
+  active: C4
   configs:
     C1: {size: 200, overlap: 30, min_size: 80}
     C2: {size: 400, overlap: 60, min_size: 80}
@@ -59,38 +49,19 @@ embedding:
 
 retrieval:
   dense_top_k: 30
-  bm25_top_k: 30
   rrf_k: 60
-  rerank_top_k: 20
   final_k: 5
-  collapse: max_chunk
 
 # --- Models -----------------------------------------------------------------
 models:
   llm: Qwen/Qwen2.5-1.5B-Instruct
-  reranker: BAAI/bge-reranker-base
-  clip: openai/clip-vit-base-patch32
-  nli: MoritzLaurer/DeBERTa-v3-base-mnli
 
 generation:
   max_new_tokens: 256
-  temperature: 0.0
-  format: json
-  repair_attempts: 1
 
 workflow:
   max_retries: 1
-  validation_threshold: 0
 
 # --- Evaluation -------------------------------------------------------------
 evaluation:
   goldset: data/gold/goldset_v1.jsonl
-  bootstrap_samples: 1000
-  ragas_subset_size: 40
-
-personalization:
-  cuisine_bonus: 0.05
-  ambience_bonus: 0.05
-  attribute_bonus: 0.03
-  like_bonus: 0.05
-  dislike_penalty: 0.10

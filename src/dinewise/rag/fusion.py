@@ -3,8 +3,7 @@
 Fusion happens at the chunk level: each retriever contributes an ordered
 list of chunk ids, and RRF assigns every chunk a fused score. Restaurant
 candidates are then formed by collapsing chunk hits, keeping the best
-chunk score per restaurant. Attribute filters are applied before fusion
-in the pipeline, so filtered-out restaurants never influence ranks.
+chunk score per restaurant. Attribute filters are applied to fused candidates before restaurant collapse.
 """
 
 from __future__ import annotations

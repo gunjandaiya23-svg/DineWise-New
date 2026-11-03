@@ -20,10 +20,9 @@ from dinewise.llm.validators import check_retrieved_compliance  # noqa: E402
 from dinewise.rag.bm25_index import load_bm25  # noqa: E402
 from dinewise.rag.constraints import Constraints  # noqa: E402
 from dinewise.rag.pipeline import retrieve_with_config  # noqa: E402
-from dinewise.rag.rerank import Reranker  # noqa: E402
 from dinewise.rag.search import load_retriever  # noqa: E402
 
-MODES = ["bm25", "dense", "hybrid", "hybrid_rerank", "hybrid_rerank_quality"]
+MODES = ["bm25", "dense", "hybrid"]
 
 
 def main() -> int:
@@ -39,8 +38,6 @@ def main() -> int:
     chunks = pd.read_parquet(data_path(cfg, "index_dir", "faiss", name, "chunks.parquet"))
     retriever = load_retriever(cfg, name)
     bm25 = load_bm25(cfg, name)
-    print("Loading cross-encoder reranker ...")
-    reranker = Reranker(cfg["models"]["reranker"], device=cfg["embedding"]["device"])
 
     gold_path = ROOT / "data" / "gold" / "goldset_v1.jsonl"
     if not gold_path.exists():
@@ -61,7 +58,6 @@ def main() -> int:
             outcome = retrieve_with_config(
                 retriever, bm25, chunks, restaurants, record["query"],
                 mode=mode, constraints=constraints, pool=args.pool, k=args.k,
-                reranker=reranker if mode.startswith("hybrid_rerank") else None,
             )
             ranked = [str(hit["chunk"]["business_id"]) for hit in outcome["hits"]]
             metrics = evaluate_ranking(ranked, record["gold"], k=args.k)
@@ -85,6 +81,7 @@ def main() -> int:
         )
 
     summary = {
+        "corpus": json.loads(data_path(cfg, "processed_dir", "corpus.json").read_text()),
         "label_source": "silver_rubric_v1",
         "needs_manual_review": True,
         "chunk_config": name,

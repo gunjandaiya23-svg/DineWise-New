@@ -15,7 +15,6 @@ from .bm25_index import BM25Index
 from .constraints import Constraints, extract_constraints
 from .filters import apply_filters
 from .fusion import collapse_to_restaurants, rrf_fuse
-from .rerank import quality_prior
 from .search import Retriever
 
 
@@ -27,63 +26,11 @@ def retrieve_filtered(
     pool: int = 30,
     k: int = 5,
 ) -> dict[str, Any]:
-    """Retrieve, filter, and rank. Returns hits plus diagnostics."""
-    constraints = constraints or extract_constraints(
-        query, known_cities=sorted(catalogue["city"].dropna().unique().tolist())
+    """Compatibility entry point for dense retrieval scripts."""
+    return retrieve_with_config(
+        retriever, None, retriever.chunks, catalogue, query,
+        mode="dense", constraints=constraints, pool=pool, k=k,
     )
-    if constraints.unknown_city:
-        return {
-            "constraints": constraints,
-            "refused": True,
-            "reason": (
-                f"'{constraints.unknown_city}' is not in the dataset, which covers "
-                f"{', '.join(sorted(catalogue['city'].dropna().unique().tolist()))}."
-            ),
-            "filter_counts": {"start": len(catalogue)},
-            "candidates_after_filter": 0,
-            "skipped_by_filter": 0,
-            "hits": [],
-        }
-    if constraints.unsupported_terms:
-        return {
-            "constraints": constraints,
-            "refused": True,
-            "reason": (
-                "The dataset does not record information about "
-                f"{', '.join(constraints.unsupported_terms)}, so this cannot be answered."
-            ),
-            "filter_counts": {"start": len(catalogue)},
-            "candidates_after_filter": 0,
-            "skipped_by_filter": 0,
-            "hits": [],
-        }
-    allowed, filter_counts = apply_filters(catalogue, constraints)
-    allowed_ids = set(allowed["business_id"])
-
-    hits = retriever.search(query, k=pool)
-    ranked: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    skipped = 0
-    for hit in hits:
-        business_id = str(hit["chunk"]["business_id"])
-        if business_id in seen:
-            continue
-        if business_id not in allowed_ids:
-            skipped += 1
-            continue
-        seen.add(business_id)
-        ranked.append(hit)
-        if len(ranked) >= k:
-            break
-
-    return {
-        "constraints": constraints,
-        "refused": False,
-        "filter_counts": filter_counts,
-        "candidates_after_filter": len(allowed),
-        "skipped_by_filter": skipped,
-        "hits": ranked,
-    }
 
 
 def scope_refusal(constraints: Constraints, catalogue: pd.DataFrame) -> str | None:
@@ -119,7 +66,7 @@ def _restrict_to_allowed(
         if business_id in seen or business_id not in allowed_ids:
             continue
         seen.add(business_id)
-        ranked.append({"score": 0.0, "chunk": row.to_dict()})
+        ranked.append({"score": 0.0, "chunk": {**row.to_dict(), "chunk_id": chunk_id}})
         if len(ranked) >= k:
             break
     return ranked
@@ -127,7 +74,7 @@ def _restrict_to_allowed(
 
 def retrieve_with_config(
     retriever: Retriever,
-    bm25: BM25Index,
+    bm25: BM25Index | None,
     chunks: pd.DataFrame,
     catalogue: pd.DataFrame,
     query: str,
@@ -136,13 +83,10 @@ def retrieve_with_config(
     pool: int = 30,
     k: int = 5,
     rrf_k: int = 60,
-    reranker: Any | None = None,
-    rerank_pool: int = 20,
 ) -> dict[str, Any]:
     """Run one retrieval configuration with per-stage timings.
 
-    mode is one of "dense" (E2), "bm25" (E1), "hybrid" (E3, RRF fusion),
-    "hybrid_rerank" (E4), or "hybrid_rerank_quality" (E4 + quality prior).
+    mode is one of "dense" (E2), "bm25" (E1), "hybrid" (E3, RRF fusion).
     Returns the same diagnostics shape as retrieve_filtered plus timings.
     """
     constraints = constraints or extract_constraints(
@@ -162,6 +106,10 @@ def retrieve_with_config(
         }
     allowed, filter_counts = apply_filters(catalogue, constraints)
     allowed_ids = set(allowed["business_id"])
+    # Search the full small corpus when constraints restrict candidates. Otherwise
+    # a city can disappear simply because other cities filled the global top 30.
+    if len(allowed) < len(catalogue):
+        pool = max(pool, len(chunks))
     timings: dict[str, float] = {}
 
     if mode == "dense":
@@ -191,60 +139,13 @@ def retrieve_with_config(
             ],
             k=rrf_k,
         )
-        # Drop fused chunks from filtered-out restaurants before collapsing.
-        table = chunks.set_index("chunk_id")
-        allowed_chunks = [
-            (chunk_id, score)
-            for chunk_id, score in fused
-            if chunk_id in table.index
-            and str(table.loc[chunk_id]["business_id"]) in allowed_ids
-        ]
+        allowed_chunk_ids = set(chunks.loc[chunks["business_id"].isin(allowed_ids), "chunk_id"])
+        allowed_chunks = [(chunk_id, score) for chunk_id, score in fused
+                          if chunk_id in allowed_chunk_ids]
+        timings["fusion"] = time.perf_counter() - started
+
         hits = collapse_to_restaurants(allowed_chunks, chunks, top_k=k)
-        timings["fusion"] = time.perf_counter() - started
-    elif mode in {"hybrid_rerank", "hybrid_rerank_quality"}:
-        started = time.perf_counter()
-        dense_hits = retriever.search(query, k=pool)
-        timings["dense"] = time.perf_counter() - started
-        started = time.perf_counter()
-        lexical_hits = bm25.search(query, k=pool)
-        timings["bm25"] = time.perf_counter() - started
-        started = time.perf_counter()
-        fused = rrf_fuse(
-            [
-                [str(hit["chunk"]["chunk_id"]) for hit in dense_hits],
-                [hit["chunk_id"] for hit in lexical_hits],
-            ],
-            k=rrf_k,
-        )
-        table = chunks.set_index("chunk_id")
-        allowed_chunks = [
-            (chunk_id, score)
-            for chunk_id, score in fused
-            if chunk_id in table.index
-            and str(table.loc[chunk_id]["business_id"]) in allowed_ids
-        ]
-        timings["fusion"] = time.perf_counter() - started
 
-        if reranker is None:
-            raise ValueError(f"mode {mode} requires a reranker")
-
-        started = time.perf_counter()
-        shortlist = allowed_chunks[:rerank_pool]
-        texts = [str(table.loc[chunk_id]["text"]) for chunk_id, _ in shortlist]
-        scores = reranker.score(query, texts)
-        reranked = sorted(
-            zip([chunk_id for chunk_id, _ in shortlist], scores, strict=False),
-            key=lambda item: (-item[1], item[0]),
-        )
-        hits = collapse_to_restaurants(
-            reranked, chunks, top_k=k * 2 if mode.endswith("quality") else k
-        )
-        timings["rerank"] = time.perf_counter() - started
-
-        if mode.endswith("quality"):
-            started = time.perf_counter()
-            hits = quality_prior(hits, catalogue)[:k]
-            timings["quality_prior"] = time.perf_counter() - started
     else:
         raise ValueError(f"unknown retrieval mode: {mode}")
 

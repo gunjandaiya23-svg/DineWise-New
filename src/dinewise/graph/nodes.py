@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import replace
 from typing import Any
 
 import pandas as pd
 
 from ..llm.guards import REFUSAL, check_scope
 from ..llm.validators import validate_answer
-from ..rag.constraints import Constraints, extract_constraints
+from ..rag.constraints import extract_constraints
 from ..rag.pipeline import retrieve_with_config
 
 INSUFFICIENT = (
@@ -33,7 +32,6 @@ def make_nodes(
     generator: Any,
 ) -> dict[str, Callable[[dict[str, Any]], dict[str, Any]]]:
     known_cities = sorted(restaurants["city"].dropna().unique().tolist())
-    max_retries = int(cfg["workflow"]["max_retries"])
 
     def classify(state: dict[str, Any]) -> dict[str, Any]:
         scope = check_scope(state["query"])
@@ -67,7 +65,9 @@ def make_nodes(
             state["query"],
             mode="hybrid",
             constraints=state["constraints"],
-            k=5,
+            k=int(cfg["retrieval"]["final_k"]),
+            pool=int(cfg["retrieval"]["dense_top_k"]),
+            rrf_k=int(cfg["retrieval"]["rrf_k"]),
         )
         if outcome.get("refused"):
             return {
@@ -114,18 +114,9 @@ def make_nodes(
         }
 
     def retry(state: dict[str, Any]) -> dict[str, Any]:
-        constraints: Constraints = state["constraints"]
-        relaxed = replace(
-            constraints,
-            max_price_bucket=None,
-            min_price_bucket=None,
-            required_attributes=[],
-            soft_preferences=constraints.soft_preferences + ["relaxed_on_retry"],
-        )
         return {
-            "constraints": relaxed,
             "retry_count": int(state.get("retry_count", 0)) + 1,
-            "trace": _trace(state, "retry_relaxed_soft_constraints"),
+            "trace": _trace(state, "retry_generation"),
         }
 
     def fallback(state: dict[str, Any]) -> dict[str, Any]:
@@ -149,7 +140,6 @@ def make_nodes(
             "trace": _trace(state, "fallback"),
         }
 
-    _ = max_retries
     return {
         "classify": classify,
         "retrieve": retrieve,

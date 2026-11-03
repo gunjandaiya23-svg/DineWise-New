@@ -8,28 +8,32 @@
   },
   "selection": {
     "cities": [
-      "Philadelphia"
+      "Philadelphia",
+      "Indianapolis",
+      "Tampa",
+      "New Orleans",
+      "Tucson"
     ],
-    "limit": 500,
-    "after_city_filter": 2126,
-    "after_food_service_filter": 1894,
-    "venue_excluded": 17,
-    "selected": 500
+    "limit": null,
+    "after_city_filter": 6946,
+    "after_food_service_filter": 6034,
+    "venue_excluded": 66,
+    "selected": 5968
   },
   "corpus": {
-    "restaurants": 500,
-    "reviews": 75323,
-    "with_review_summary": 500,
-    "with_photo_summary": 490,
-    "with_price": 500,
-    "cuisine_covered": 499
+    "restaurants": 5968,
+    "reviews": 382253,
+    "with_review_summary": 5968,
+    "with_photo_summary": 5364,
+    "with_price": 5748,
+    "cuisine_covered": 5759
   },
   "quality": {
     "duplicate_business_ids": 0,
     "duplicate_review_ids": 0,
     "attribute_parse_rate": 1.0,
-    "missing_price_pct": 0.0,
-    "cuisine_coverage_pct": 99.8,
+    "missing_price_pct": 3.69,
+    "cuisine_coverage_pct": 96.5,
     "review_join_coverage_pct": 100.0
   }
 }

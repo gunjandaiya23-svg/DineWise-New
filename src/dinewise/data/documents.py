@@ -1,4 +1,4 @@
-"""Generate the human-readable knowledge-base documents (TXT, PDF, DOCX)."""
+"""Generate the human-readable knowledge-base documents (TXT)."""
 
 from __future__ import annotations
 
@@ -7,63 +7,12 @@ import json
 import time
 from pathlib import Path
 from typing import Any
-from xml.sax.saxutils import escape
 
 import pandas as pd
-from docx import Document
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.units import mm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 from ..logging import get_logger
 
 LOG = get_logger(__name__)
-
-POLICY: list[tuple[str, str]] = [
-    (
-        "Budget",
-        "Filter by the dataset's price bucket. Never invent a dollar price. "
-        "Treat an unknown price as unknown, not as cheap.",
-    ),
-    (
-        "Cuisine",
-        "Prefer restaurants whose cuisine tags match the request. If no exact match "
-        "exists, say so before offering alternatives.",
-    ),
-    (
-        "Dietary preferences",
-        "Use explicit evidence only. A review mentioning vegetarian options is evidence; "
-        "the absence of such a mention is not evidence of absence. Medical allergies must "
-        "never be inferred.",
-    ),
-    (
-        "Ambience",
-        "Use structured attributes first (romantic, intimate, classy, noise level, outdoor "
-        "seating). Use review and photo summaries only as supporting evidence. A policy "
-        "preference for quiet restaurants does not establish that a particular restaurant "
-        "is quiet.",
-    ),
-    (
-        "Ranking",
-        "Rank by constraint satisfaction, then relevance, then review evidence, then rating. "
-        "Do not rank by rating alone.",
-    ),
-    (
-        "Explanation",
-        "Explain why each restaurant matches. Cite the source of every factual claim.",
-    ),
-    (
-        "Uncertainty",
-        "If the dataset lacks information, say so. Do not guess.",
-    ),
-    (
-        "Out of scope",
-        "Do not answer questions about live availability, reservations, current prices, or "
-        "real-time wait times.",
-    ),
-]
-
 
 def _missing(value: Any) -> bool:
     if value is None:
@@ -183,104 +132,6 @@ def write_profiles(
     }
 
 
-def _pdf_body(value: str, style: ParagraphStyle) -> Paragraph:
-    return Paragraph(escape(value), style)
-
-
-def write_review_pdf(restaurants: pd.DataFrame, path: Path) -> dict[str, Any]:
-    started = time.perf_counter()
-    styles = getSampleStyleSheet()
-    heading = ParagraphStyle(
-        "DineWiseHeading",
-        parent=styles["Heading2"],
-        fontSize=10.5,
-        leading=13,
-        spaceBefore=4,
-        spaceAfter=2,
-    )
-    body = ParagraphStyle(
-        "DineWiseBody", parent=styles["BodyText"], fontSize=8.2, leading=10.5
-    )
-
-    document = SimpleDocTemplate(
-        str(path),
-        pagesize=A4,
-        leftMargin=14 * mm,
-        rightMargin=14 * mm,
-        topMargin=14 * mm,
-        bottomMargin=14 * mm,
-        title="DineWise Customer Review Insights",
-        author="DineWise",
-    )
-
-    story: list[Any] = []
-    for _, row in restaurants.iterrows():
-        name = _text(row.get("name"), "Unknown")
-        story.append(
-            _pdf_body(f"{name} ({row['business_id']})", heading)
-        )
-        meta = (
-            f"Cuisine: {_text(row.get('cuisine_tags'), 'Unspecified')} | "
-            f"City: {_text(row.get('city'), 'unknown')} | "
-            f"Price: {_text(row.get('price_label'), 'unknown')} | "
-            f"Rating: {row.get('stars')} ({int(row.get('review_count') or 0)} reviews)"
-        )
-        story.append(_pdf_body(meta, body))
-
-        summary = _text(row.get("review_summary"))
-        if summary:
-            story.append(_pdf_body(f"Review summary: {summary}", body))
-        themes = _text(row.get("review_themes"))
-        if themes:
-            story.append(_pdf_body(f"Recurring themes: {themes}", body))
-        keywords = _text(row.get("review_keywords"))
-        if keywords:
-            story.append(_pdf_body(f"Keywords: {keywords}", body))
-        visual = _text(row.get("photo_summary"))
-        if visual:
-            story.append(_pdf_body(f"Visual description: {visual}", body))
-        story.append(
-            _pdf_body(
-                "Source: review_summary.csv and review.csv (aggregated); "
-                "summary generated upstream and not independently verified.",
-                body,
-            )
-        )
-        story.append(Spacer(1, 4 * mm))
-
-    document.build(story)
-    elapsed = time.perf_counter() - started
-    LOG.info("wrote %s (%.1f KB)", path.name, path.stat().st_size / 1024)
-    return {
-        "path": str(path),
-        "entries": len(restaurants),
-        "bytes": path.stat().st_size,
-        "seconds": round(elapsed, 2),
-    }
-
-
-def write_policy_docx(path: Path) -> dict[str, Any]:
-    started = time.perf_counter()
-    document = Document()
-    document.add_heading("DineWise Recommendation Policy", level=1)
-    document.add_paragraph(
-        "These are rules for the assistant, not facts about any restaurant. "
-        "Policy text must never be cited as evidence about a specific business."
-    )
-    for title, text in POLICY:
-        document.add_heading(title, level=2)
-        document.add_paragraph(text)
-    document.save(path)
-    elapsed = time.perf_counter() - started
-    LOG.info("wrote %s (%.1f KB)", path.name, path.stat().st_size / 1024)
-    return {
-        "path": str(path),
-        "sections": len(POLICY),
-        "bytes": path.stat().st_size,
-        "seconds": round(elapsed, 2),
-    }
-
-
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -307,12 +158,6 @@ def build_documents(
     }
     manifest["files"]["profiles"] = write_profiles(
         restaurants, docs_dir / "restaurant_profiles.txt", reviews_by_business
-    )
-    manifest["files"]["review_insights"] = write_review_pdf(
-        restaurants, docs_dir / "customer_review_insights.pdf"
-    )
-    manifest["files"]["policy"] = write_policy_docx(
-        docs_dir / "dining_preferences.docx"
     )
     for info in manifest["files"].values():
         info["sha256"] = sha256_file(Path(info["path"]))

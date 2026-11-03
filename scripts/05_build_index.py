@@ -61,6 +61,7 @@ def main() -> int:
 
     meta = {
         "created_at": datetime.now(UTC).isoformat(),
+        "corpus": json.loads(data_path(cfg, "processed_dir", "corpus.json").read_text()),
         "model": cfg["embedding"]["model"],
         "chunk_config": name,
         "chunks": int(len(chunks)),

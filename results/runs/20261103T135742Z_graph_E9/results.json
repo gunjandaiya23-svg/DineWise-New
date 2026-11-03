@@ -1,0 +1,397 @@
+{
+  "summary": {
+    "corpus": {
+      "raw": {
+        "businesses": 16702,
+        "reviews": 837559,
+        "review_summaries": 16702,
+        "photo_summaries": 13289,
+        "photos": 118951
+      },
+      "selection": {
+        "cities": [
+          "Philadelphia",
+          "Indianapolis",
+          "Tampa",
+          "New Orleans",
+          "Tucson"
+        ],
+        "limit": null,
+        "after_city_filter": 6946,
+        "after_food_service_filter": 6034,
+        "venue_excluded": 66,
+        "selected": 5968
+      },
+      "corpus": {
+        "restaurants": 5968,
+        "reviews": 382253,
+        "with_review_summary": 5968,
+        "with_photo_summary": 5364,
+        "with_price": 5748,
+        "cuisine_covered": 5759
+      },
+      "quality": {
+        "duplicate_business_ids": 0,
+        "duplicate_review_ids": 0,
+        "attribute_parse_rate": 1.0,
+        "missing_price_pct": 3.69,
+        "cuisine_coverage_pct": 96.5,
+        "review_join_coverage_pct": 100.0
+      }
+    },
+    "mode": "template",
+    "queries": 15,
+    "answered": 12,
+    "refused": 1,
+    "fallbacks": 3,
+    "validation_passed": 12,
+    "retries": 0,
+    "mean_seconds": 0.41
+  },
+  "results": [
+    {
+      "query_id": "Q01",
+      "facet": "cuisine",
+      "query": "Find Italian restaurants with good reviews in Philadelphia.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **La Viola** (ID: 4_VDvhKpKSsj7jZYdocZYA) \u2014 Italian, $$, rating 3.5 (dataset value).\n2. **D'Angelo's Ristorante Italiano** (ID: 8JcdN89xv4AqAVRSDLLUHw) \u2014 Italian, $$$, rating 3.5 (dataset value).\n3. **Ristorante Pesto** (ID: ozOneB4jXOD6hv5WBGj4KQ) \u2014 Italian, $$, rating 4.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=['Italian'],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.83
+    },
+    {
+      "query_id": "Q02",
+      "facet": "budget",
+      "query": "Recommend restaurants under $$ in Philadelphia.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **La Viola** (ID: 4_VDvhKpKSsj7jZYdocZYA) \u2014 Italian, $$, rating 3.5 (dataset value).\n2. **Philadelphia Distilling** (ID: eAzeb04i354i6VZFI4bJRQ) \u2014 Bar/Nightlife, $$, rating 5.0 (dataset value).\n3. **Porcini** (ID: 3lBooCffgkW7tVSG5kILBA) \u2014 Italian, $$, rating 3.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=[],max_price=2",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.71
+    },
+    {
+      "query_id": "Q03",
+      "facet": "review_aspect",
+      "query": "Which restaurants have the best food quality according to reviews?",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **Galliano Restaurant** (ID: RGXb-3iUuaORNWB_nt_RcQ) \u2014 Seafood, $$, rating 4.5 (dataset value).\n2. **Guiseppe's** (ID: 42BmFLsm1YAommyVHYxV5Q) \u2014 Italian, $$, rating 3.5 (dataset value).\n3. **Bishos** (ID: FvBUare-QfqoTyHIvbWkvA) \u2014 Mediterranean, $$, rating 4.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=None,cuisines=[],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.1
+    },
+    {
+      "query_id": "Q04",
+      "facet": "ambience",
+      "query": "Find restaurants with positive ambience reviews in Philadelphia.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **The Bourse Food Hall** (ID: LSh18uOYKvYUtVoRXAsrtw) \u2014 Unspecified, $$, rating 4.0 (dataset value).\n2. **Philadelphia Distilling** (ID: eAzeb04i354i6VZFI4bJRQ) \u2014 Bar/Nightlife, $$, rating 5.0 (dataset value).\n3. **a.kitchen** (ID: 3eJMsl41qwhcYlvoTF1ElQ) \u2014 Breakfast/Brunch, $$$, rating 3.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=[],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.71
+    },
+    {
+      "query_id": "Q05",
+      "facet": "personalization",
+      "query": "Recommend a restaurant for a family dinner in Philadelphia.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **La Nonna** (ID: 2gDkEvBPkl-ATS_eqaMvxQ) \u2014 Italian, $$, rating 4.5 (dataset value).\n2. **The Little Lion** (ID: rgSHLh2Le0Un82FDxbq0mg) \u2014 American, $$, rating 4.0 (dataset value).\n3. **Aya's Cafe** (ID: TpaWkW4eazEBNZkDeIYLYg) \u2014 Greek, $$, rating 4.0 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=[],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.46
+    },
+    {
+      "query_id": "Q06",
+      "facet": "comparison",
+      "query": "Compare two Italian restaurants in Philadelphia based on reviews.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **La Viola** (ID: 4_VDvhKpKSsj7jZYdocZYA) \u2014 Italian, $$, rating 3.5 (dataset value).\n2. **Porcini** (ID: 3lBooCffgkW7tVSG5kILBA) \u2014 Italian, $$, rating 3.5 (dataset value).\n3. **Ristorante Pesto** (ID: ozOneB4jXOD6hv5WBGj4KQ) \u2014 Italian, $$, rating 4.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=['Italian'],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.42
+    },
+    {
+      "query_id": "Q07",
+      "facet": "dessert",
+      "query": "Which restaurants in New Orleans are praised for their desserts?",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **Sucr\u00e9** (ID: jar_5KMQZtgOseRdUN3L0w) \u2014 Bakery/Dessert, $$, rating 4.0 (dataset value).\n2. **Boucherie** (ID: rsMbMeW7IbXxPFh4WwbddQ) \u2014 BBQ, $$, rating 4.5 (dataset value).\n3. **Croissant D'Or Patisserie** (ID: M0YuK7sLLSA3TfBC4UkUzg) \u2014 Bakery/Dessert, $, rating 4.0 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=New Orleans,cuisines=[],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.54
+    },
+    {
+      "query_id": "Q08",
+      "facet": "dietary",
+      "query": "Find restaurants with vegetarian options in Philadelphia.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **Samosa Vegetarian** (ID: LY6OCkHEwfZtdOoQawNkWg) \u2014 Indian, $, rating 4.5 (dataset value).\n2. **Wiz Kid** (ID: w9hS5x1F52Id-G1KTrAOZg) \u2014 Vegetarian/Vegan, $$, rating 4.5 (dataset value).\n3. **Hibiscus Cafe** (ID: TyhguONKc8i6M7wP09nTbA) \u2014 Vegetarian/Vegan, $$, rating 4.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=[],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.71
+    },
+    {
+      "query_id": "Q09",
+      "facet": "cuisine",
+      "query": "Find pizza restaurants in Indianapolis.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **Puccini's Pizza Pasta - Clearwater** (ID: K7COP3apcoLdA54zavg5UQ) \u2014 Italian, $$, rating 4.0 (dataset value).\n2. **Giorgio's Pizza** (ID: VE9TeBKNZnu33iBzfYMiag) \u2014 Italian, $, rating 4.0 (dataset value).\n3. **Goodfellas Pizzeria - Broad Ripple** (ID: X-J8KLkbFJB4WCGdqSvePQ) \u2014 Italian, $, rating 4.0 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Indianapolis,cuisines=['Italian'],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.4
+    },
+    {
+      "query_id": "Q10",
+      "facet": "cuisine",
+      "query": "Find seafood restaurants in Tampa.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **Blue Sea Fish Market and Restaurant** (ID: yAJd-jQH_RoV4xyVrfHPSQ) \u2014 Seafood, $, rating 4.5 (dataset value).\n2. **Riverside Seafood Market** (ID: JiEcu8LvmlsPh_Q6Exzp9A) \u2014 Seafood, $$, rating 3.5 (dataset value).\n3. **Shells Seafood Restaurant - South Tampa** (ID: YbEVMCXzbcibj2a11Yzg1g) \u2014 Seafood, $$, rating 4.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Tampa,cuisines=['Seafood'],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.33
+    },
+    {
+      "query_id": "Q11",
+      "facet": "ranking",
+      "query": "Which restaurant in Tucson offers the best value for money?",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **Karuna's Thai Plate** (ID: kuE88EeEQZLNG_GfDbib4w) \u2014 Thai, $, rating 4.0 (dataset value).\n2. **Sauce Pizza & Wine** (ID: Dun6k9Y5j76e9ODgkmHKlQ) \u2014 Italian, $$, rating 4.5 (dataset value).\n3. **Rubio's** (ID: 5nOTwLs2lCpsFwZzHA6Hvg) \u2014 Mexican, $, rating 3.5 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Tucson,cuisines=[],max_price=None",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.47
+    },
+    {
+      "query_id": "Q12",
+      "facet": "multi_constraint",
+      "query": "Family-friendly Mexican restaurant in Philadelphia under $$.",
+      "answer": "Based on the dataset records, these restaurants match your request:\n\n1. **El Compadre** (ID: 5gqoD4EknTFf-39zz1Fa1w) \u2014 Mexican, $, rating 4.5 (dataset value).\n2. **El Taco** (ID: A37C-01zpQty9FmxvZrxEg) \u2014 Mexican, $, rating 4.0 (dataset value).\n3. **La Calaca Feliz** (ID: DZglT5FP5VNDQJU3PuRIHw) \u2014 Mexican, $$, rating 4.0 (dataset value).\n\nRatings and prices are dataset values, not live information.",
+      "passed": true,
+      "fallback": false,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": false,
+      "n_hits": 5,
+      "validation": {
+        "passed": true,
+        "hard_failures": [],
+        "soft_failures": []
+      },
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=['Mexican'],max_price=2",
+        "retrieved:5",
+        "generated",
+        "validated:pass"
+      ],
+      "seconds": 0.51
+    },
+    {
+      "query_id": "Q13",
+      "facet": "out_of_scope",
+      "query": "Give me the live availability of Reading Terminal Market tonight.",
+      "answer": "I can't answer that from this dataset. DineWise uses static restaurant records and reviews, and it has no live availability, booking, wait-time, or current-price data. I can still help you find restaurants by cuisine, budget bucket, location, rating, or review evidence.",
+      "passed": false,
+      "fallback": true,
+      "retry_count": 0,
+      "out_of_scope": true,
+      "refused": false,
+      "n_hits": 0,
+      "validation": {},
+      "trace": [
+        "out_of_scope:live availability",
+        "fallback"
+      ],
+      "seconds": 0.0
+    },
+    {
+      "query_id": "Q14",
+      "facet": "out_of_scope",
+      "query": "Recommend a restaurant in Las Vegas.",
+      "answer": "I can't answer that from this dataset. 'Las Vegas' is not in the dataset, which covers Indianapolis, New Orleans, Philadelphia, Tampa, Tucson. I can still help with cuisine, budget bucket, rating, or review evidence.",
+      "passed": false,
+      "fallback": true,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": true,
+      "n_hits": 0,
+      "validation": {},
+      "trace": [
+        "constraints:city=None,cuisines=[],max_price=None",
+        "refused:'Las Vegas' is not in the dataset, which covers Indianapolis, New Orleans, Philadelphia, Tampa, Tucson.",
+        "fallback"
+      ],
+      "seconds": 0.0
+    },
+    {
+      "query_id": "Q15",
+      "facet": "unsupported",
+      "query": "Which restaurant in Philadelphia has a rooftop pool?",
+      "answer": "I can't answer that from this dataset. The dataset does not record information about rooftop areas, pools, so this cannot be answered. I can still help with cuisine, budget bucket, rating, or review evidence.",
+      "passed": false,
+      "fallback": true,
+      "retry_count": 0,
+      "out_of_scope": false,
+      "refused": true,
+      "n_hits": 0,
+      "validation": {},
+      "trace": [
+        "constraints:city=Philadelphia,cuisines=[],max_price=None",
+        "refused:The dataset does not record information about rooftop areas, pools, so this cannot be answered.",
+        "fallback"
+      ],
+      "seconds": 0.0
+    }
+  ]
+}

@@ -70,7 +70,7 @@ def main() -> int:
     print(f"Constraints: city={constraints.city} cuisines={constraints.cuisines} "
           f"max_price={constraints.max_price_bucket} attrs={constraints.required_attributes}")
     print(f"Candidates after filter: {outcome['candidates_after_filter']} "
-          f"(skipped {outcome['skipped_by_filter']} non-matching)")
+          "after constraint filtering")
 
     model_name = cfg["models"]["llm"]
     print(f"Loading {model_name} (four_bit={args.four_bit}) ...")

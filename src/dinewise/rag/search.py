@@ -27,10 +27,11 @@ class Retriever:
             convert_to_numpy=True,
         ).astype(np.float32)
         scores, ids = self.index.search(vector, min(k, len(self.chunks)))
+        valid = ids[0] >= 0
+        records = self.chunks.iloc[ids[0][valid]].to_dict("records")
         return [
-            {"score": float(score), "chunk": self.chunks.iloc[int(index)].to_dict()}
-            for score, index in zip(scores[0], ids[0], strict=False)
-            if int(index) >= 0
+            {"score": float(score), "chunk": record}
+            for score, record in zip(scores[0][valid], records, strict=True)
         ]
 
     def unique_restaurants(self, query: str, k: int = 5, pool: int = 30) -> list[dict[str, Any]]:

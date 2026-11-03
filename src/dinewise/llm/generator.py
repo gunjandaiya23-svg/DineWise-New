@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import pandas as pd
 import torch
 
 from .prompts import build_messages
@@ -70,7 +71,7 @@ class Generator:
         for index, hit in enumerate(hits[:3], start=1):
             row = hit["chunk"]
             price = row.get("price_range")
-            price_text = f"{'$' * int(price)}" if price is not None else "price unknown"
+            price_text = f"{'$' * int(price)}" if pd.notna(price) else "price unknown"
             lines.append(
                 f"{index}. **{row.get('restaurant_name')}** (ID: {row['business_id']}) — "
                 f"{row.get('cuisine_primary')}, {price_text}, "

@@ -1,0 +1,115 @@
+{
+  "experiment": "E5",
+  "corpus": {
+    "raw": {
+      "businesses": 16702,
+      "reviews": 837559,
+      "review_summaries": 16702,
+      "photo_summaries": 13289,
+      "photos": 118951
+    },
+    "selection": {
+      "cities": [
+        "Philadelphia",
+        "Indianapolis",
+        "Tampa",
+        "New Orleans",
+        "Tucson"
+      ],
+      "limit": null,
+      "after_city_filter": 6946,
+      "after_food_service_filter": 6034,
+      "venue_excluded": 66,
+      "selected": 5968
+    },
+    "corpus": {
+      "restaurants": 5968,
+      "reviews": 382253,
+      "with_review_summary": 5968,
+      "with_photo_summary": 5364,
+      "with_price": 5748,
+      "cuisine_covered": 5759
+    },
+    "quality": {
+      "duplicate_business_ids": 0,
+      "duplicate_review_ids": 0,
+      "attribute_parse_rate": 1.0,
+      "missing_price_pct": 3.69,
+      "cuisine_coverage_pct": 96.5,
+      "review_join_coverage_pct": 100.0
+    }
+  },
+  "retrieval_mode": "hybrid",
+  "label_source": "silver_rubric_v1",
+  "rows": [
+    {
+      "chunks": 46576,
+      "chunks_with_multiple_markers": 0,
+      "max_markers_in_a_chunk": 1,
+      "config": "C1",
+      "size": 200,
+      "overlap": 30,
+      "mean_tokens": 211.8015930951563,
+      "index_bytes": 71540781,
+      "seconds": 146.34,
+      "strict_success@k": 0.3333,
+      "strict_precision@k": 0.0667,
+      "strict_mrr": 0.1375,
+      "ndcg@k": 0.3749,
+      "any_success@k": 1.0,
+      "any_precision@k": 1.0
+    },
+    {
+      "chunks": 24712,
+      "chunks_with_multiple_markers": 0,
+      "max_markers_in_a_chunk": 1,
+      "config": "C2",
+      "size": 400,
+      "overlap": 60,
+      "mean_tokens": 378.82279864033666,
+      "index_bytes": 37957677,
+      "seconds": 191.5,
+      "strict_success@k": 0.5,
+      "strict_precision@k": 0.1167,
+      "strict_mrr": 0.2153,
+      "ndcg@k": 0.4051,
+      "any_success@k": 1.0,
+      "any_precision@k": 1.0
+    },
+    {
+      "chunks": 17567,
+      "chunks_with_multiple_markers": 0,
+      "max_markers_in_a_chunk": 1,
+      "config": "C3",
+      "size": 600,
+      "overlap": 90,
+      "mean_tokens": 520.6821312688563,
+      "index_bytes": 26982957,
+      "seconds": 191.91,
+      "strict_success@k": 0.4167,
+      "strict_precision@k": 0.1,
+      "strict_mrr": 0.2,
+      "ndcg@k": 0.4,
+      "any_success@k": 1.0,
+      "any_precision@k": 1.0
+    },
+    {
+      "chunks": 12697,
+      "chunks_with_multiple_markers": 0,
+      "max_markers_in_a_chunk": 1,
+      "config": "C4",
+      "size": 800,
+      "overlap": 120,
+      "mean_tokens": 694.5811609041506,
+      "index_bytes": 19502637,
+      "seconds": 119.62,
+      "strict_success@k": 0.5,
+      "strict_precision@k": 0.1333,
+      "strict_mrr": 0.2389,
+      "ndcg@k": 0.4196,
+      "any_success@k": 1.0,
+      "any_precision@k": 1.0
+    }
+  ],
+  "best_config": "C4"
+}

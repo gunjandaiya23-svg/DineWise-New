@@ -9,11 +9,11 @@ ANSWERABLE_QUERIES: list[tuple[str, str, str]] = [
     ("Q04", "ambience", "Find restaurants with positive ambience reviews in Philadelphia."),
     ("Q05", "personalization", "Recommend a restaurant for a family dinner in Philadelphia."),
     ("Q06", "comparison", "Compare two Italian restaurants in Philadelphia based on reviews."),
-    ("Q07", "dessert", "Which restaurants in Philadelphia are praised for their desserts?"),
+    ("Q07", "dessert", "Which restaurants in New Orleans are praised for their desserts?"),
     ("Q08", "dietary", "Find restaurants with vegetarian options in Philadelphia."),
-    ("Q09", "image", "Show restaurants similar to this uploaded pizza photo in Philadelphia."),
-    ("Q10", "visual", "Find restaurants with attractive interiors in Philadelphia."),
-    ("Q11", "ranking", "Which restaurant in Philadelphia offers the best value for money?"),
+    ("Q09", "cuisine", "Find pizza restaurants in Indianapolis."),
+    ("Q10", "cuisine", "Find seafood restaurants in Tampa."),
+    ("Q11", "ranking", "Which restaurant in Tucson offers the best value for money?"),
     ("Q12", "multi_constraint", "Family-friendly Mexican restaurant in Philadelphia under $$."),
 ]
 

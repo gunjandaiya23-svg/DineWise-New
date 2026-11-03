@@ -1,1 +1,1 @@
-"""LangGraph orchestration for DineWise."""
+"""Retrieval and validated generation workflow for DineWise."""

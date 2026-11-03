@@ -6,47 +6,18 @@ The system answers questions such as *"Find Italian restaurants with vegetarian 
 
 This is a research prototype over a static dataset. It is **not** a booking system and does not provide live availability or prices.
 
-## Status
+## Current corpus and comparisons
 
-| Phase | State |
-|---|---|
-| Documentation | Complete, split under [`docs/`](docs/README.md) |
-| P0 Environment | Done: Python 3.12, torch 2.11 + CUDA 12.8, GPU verified |
-| P1 Data layer | Done for the 500-restaurant pilot corpus |
-| P2 Documents | Done: TXT, PDF, DOCX generated |
-| P3 Chunking + index | Done: C1–C4 evaluated; C3 active (1,511 chunks), BGE + FAISS |
-| P4 Retrieval + generation | Done: filtered retrieval, Qwen answer, validators, 15-query suite |
-| P5 BM25 + hybrid + reranker | Done: BM25, RRF, cross-encoder, quality prior (E1–E4) |
-| P6 Gold set + metrics | Done: silver gold set + Success/P@5/MRR/nDCG (manual review pending) |
-| P7 LangGraph | Done: classify → retrieve → generate → validate → retry/fallback (E9) |
-| P8 Visual | Done: visual-summary retrieval + CLIP zero-shot (E6) |
-| P9 LoRA + efficiency | Done: QLoRA trained, E7 + E8 measured |
-| P10 Streamlit app | Done: working local app |
+The default corpus covers **Philadelphia, Indianapolis, Tampa, New Orleans, and
+Tucson**, with no 500-restaurant pilot cap. The prepared corpus contains 5,968
+restaurants and 382,253 reviews.
 
-### Final results
-
-| Experiment | Result |
-|---|---|
-| Data | 500 restaurants, 75,323 reviews, 99.8% cuisine coverage, 100% attribute parse |
-| E5 chunking | C3 (600/90) selected: 1,511 chunks, nDCG@5 0.437, 0 marker contamination |
-| E1 BM25 | nDCG@5 0.406, strict Success@5 0.250, any-success 1.000 |
-| E2 dense (FAISS) | nDCG@5 0.428, strict Success@5 0.333, any-success 1.000 |
-| E3 hybrid RRF | nDCG@5 0.437, strict Success@5 0.500, MRR 0.306 |
-| E4 rerank | nDCG@5 0.380 (negative result), quality prior 0.390 |
-| E6 visual | 490 docs; strict Success@5 0.400; CLIP top-1 82.2%, top-5 95.0%, mapped cuisine 84.1% |
-| E7 LoRA | 400 examples, eval loss 0.122; RAG grounded 80%, hard-pass 100%; no-RAG grounded 0% |
-| E8 efficiency | FP16 3.09 GB / 43.2 tok/s; INT4 1.12 GB / 43.0 tok/s; INT8 1.78 GB / 13.4 tok/s; LoRA-INT4 1.16 GB / 20.8 tok/s |
-| E9 graph | 12/15 answered, 3 correctly refused, 12/12 validation passed, 5.54 s mean |
-| Tests | 67 passing, ruff clean |
-
-### Known gaps
-
-- Retrieval labels are **silver** (rubric), not human judgments. `data/gold/review_sheet.csv` is the review sheet.
-- One city, 500 restaurants; E10 held-out-city and E11 personalization not run.
-- Reranking did not improve nDCG against the quality-oriented silver set.
-- Dietary constraints are soft, not safety guarantees.
-- Philadelphia Museum of Art still surfaces (venue with a cafe).
-- CLIP is evaluated on external Food-101 images, not restaurant photos.
+Supported comparisons: BM25 / dense / hybrid RAG, C1–C4 chunking, base versus
+LoRA generation, and FP16 / INT4 / INT8 quantization benchmarks.
+Historical results under `results/` and the report describe the earlier pilot;
+they are not measurements of the expanded corpus. Rerun evaluations after a rebuild.
+C4 is the active chunk configuration after the five-city comparison (silver nDCG@5: 0.420).
+Labels are automatically generated silver judgments; manual review remains needed.
 
 ## Quickstart
 
@@ -55,7 +26,7 @@ make setup        # create .venv (Python 3.12) and install dependencies
 make check        # verify GPU, packages, and paths
 make download     # fetch the dataset into data/raw with checksum verification
 make prep         # clean the data and build data/processed/restaurants.parquet
-make docs         # generate TXT, PDF, and DOCX knowledge-base documents
+make docs         # generate TXT restaurant evidence profiles
 make chunks       # restaurant-aware token chunking
 make index        # BGE embeddings + FAISS index
 make bm25         # BM25 lexical index over the same chunks
@@ -63,9 +34,16 @@ make queries      # 15-query suite (12 answered + 3 refusals)
 make experiments  # E1/E2/E3: BM25 vs dense vs hybrid comparison
 ```
 
+To rebuild all four configurations for the five-city corpus, run `make rebuild`.
+Use `make chunking-eval` to compare them (or add `--reuse-indexes` to
+`scripts/13_chunking_experiments.py` to evaluate existing indexes).
+Install training dependencies with `uv pip install --python .venv/bin/python -e ".[tuning]"`
+before running `make lora-train` or quantization benchmarks.
+
 Then:
 
 ```bash
+make app          # launch the app
 make test         # run unit tests
 make lint         # ruff
 ```
@@ -79,7 +57,7 @@ docs/            the project plan, one file per concern
 scripts/         numbered pipeline steps
 src/dinewise/    library code
 tests/           unit tests for the data and validation layers
-app/             Streamlit interface (later)
+app/             simple Streamlit query interface
 results/         run manifests and result tables
 ```
 
@@ -90,8 +68,8 @@ Start at [`docs/README.md`](docs/README.md). The plan is intentionally split by 
 - [Overview and research questions](docs/01-overview.md)
 - [Dataset and study corpus](docs/04-dataset.md)
 - [Data engineering](docs/05-data-engineering.md)
-- [Evaluation framework](docs/16-evaluation.md)
-- [Roadmap](docs/19-roadmap.md)
+- [Evaluation framework](docs/15-evaluation.md)
+- [Roadmap](docs/18-roadmap.md)
 
 ## Data
 
