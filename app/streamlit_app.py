@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -37,8 +38,29 @@ def load_graph():
 
 
 def render_result(state: dict) -> None:
-    st.markdown(state.get("answer", ""))
+    answer = state.get("answer", "")
     hits = state.get("hits", [])
+    # Keep IDs in workflow state for validation and provenance, but hide them in prose.
+    display = "\n".join(line for line in answer.splitlines()
+                        if "business id" not in line.lower())
+    for hit in hits:
+        identifier = re.escape(str(hit["chunk"]["business_id"]))
+        display = re.sub(r"\s*\((?:ID:\s*)?" + identifier + r"\)", "", display)
+        display = re.sub(identifier, "", display)
+    st.markdown(display.replace("$", r"\$"))
+    recommended = []
+    if not state.get("fallback_used"):
+        for hit in hits:
+            row = hit["chunk"]
+            name = str(row.get("restaurant_name", ""))
+            if name and name.casefold() in answer.casefold():
+                price = row.get("price_range")
+                recommended.append({"Restaurant": name,
+                                    "Price": "$" * int(price) if pd.notna(price) else "Unknown",
+                                    "Rating (dataset)": row.get("stars")})
+    if recommended:
+        st.dataframe(pd.DataFrame(recommended), hide_index=True, width="stretch")
+        st.caption("Prices are relative dataset buckets; ratings are out of 5.")
     if hits:
         with st.expander("Restaurant records used"):
             for hit in hits:
@@ -87,6 +109,9 @@ def main() -> None:
         for city in sorted(restaurants["city"].dropna().unique()):
             st.write(f"📍 {city}")
         st.caption(f"{len(restaurants):,} restaurants in the dataset")
+        st.markdown("**Price guide**")
+        st.markdown("$ — Budget-friendly  \n$$ — Moderate  \n$$$ — Higher-priced  \n$$$$ — Most expensive".replace("$", r"\$"))
+        st.caption("Relative price categories, not exact meal prices. Unknown means no price is recorded.")
         st.markdown("**A quick note**")
         st.caption("Ratings and prices are static dataset values. Price buckets are not exact prices. "
                    "Review-based dietary claims are not guarantees.")

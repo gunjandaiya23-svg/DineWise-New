@@ -52,6 +52,7 @@ def build_context(hits: list[dict[str, Any]], max_restaurants: int = 5) -> str:
             f"City: {_value(record, 'city')}, {_value(record, 'state')}",
             f"Cuisine: {_value(record, 'cuisine_primary')}",
             f"Price bucket: {_value(record, 'price_range')} of 4",
+            f"Rating: {_value(record, 'stars')} out of 5 (dataset value)",
             "Record excerpt:",
             str(record["text"]),
         ]
@@ -72,8 +73,8 @@ RESTAURANT RECORDS:
 
 TASK:
 Recommend up to 3 restaurants from the records above. For each one, give the
-name, business ID, and one short sentence explaining the match. Include rating
-and price only when supported. Avoid repeated headings and nested bullet lists.
+name, business ID, price bucket as dollar signs, rating out of 5, and one short
+sentence explaining the match. If price or rating is missing, say unknown. Avoid repeated headings and nested bullet lists.
 Finish every recommendation before ending. State once that ratings and prices
 are dataset values. If the records do not support an answer, say so.
 """

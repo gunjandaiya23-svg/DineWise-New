@@ -17,3 +17,7 @@ Session history keeps questions, answers, restaurant records and evidence excerp
 Each question is searched independently; earlier messages are not passed to Qwen.
 Clear conversation resets the session history. Profiles, raw ranking tables, model
 toggles and developer traces are not exposed as controls.
+
+The sidebar explains the four relative price buckets. Answers include a catalogue-backed
+price and rating summary for restaurants named in the generated response. Business IDs
+remain in internal state and evidence dropdowns but are removed from the main prose.
