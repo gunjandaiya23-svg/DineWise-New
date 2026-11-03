@@ -20,4 +20,10 @@ uv pip install --python .venv/bin/python -e ".[tuning]"
 
 Streamlit caches resources in the running process. Qwen loads lazily on the first supported recommendation. Restart the app after rebuilding indexes to clear cached assets.
 
+## Common startup problems
+
+If `make app` reports that `.venv/bin/python` is missing, run `make setup`. If it reports a missing `restaurants.parquet` or index, run `make download` when the raw files are absent, then `make rebuild`. Confirm the selected chunk configuration in `config/config.yaml` matches the saved indexes. The current BGE configuration uses `cuda`, so `make check` should report a working GPU before rebuilding or launching with the default settings.
+
+The browser normally opens at `http://localhost:8501`. Stop the server with Ctrl+C. Streamlit keeps loaded resources in process memory; restart after rebuilding data, changing the active chunk configuration, or editing model settings. The first supported query loads Qwen and is slower than later requests. A live availability query may return immediately because it is refused before model loading.
+
 [Documentation index](README.md)

@@ -12,4 +12,10 @@ The documentation describes current behavior. This list separates remaining work
 
 For each change, update the affected guide, run relevant checks and make a focused commit. Do not silently replace historical benchmark claims with new corpus counts.
 
+## Acceptance for the next milestone
+
+For the five-city fine-tuning comparison, first regenerate examples from the current C4 index and record the corpus and adapter path. Check for restaurant overlap across every retrieved evidence set, not only the query's primary restaurant. Train a new adapter and evaluate all four base/LoRA plus RAG/no-RAG modes on one fixed query suite. Report the exact labels and model settings. A successful run does not require LoRA to win; it requires a reproducible, honestly interpreted comparison.
+
+For app quality, test a supported query in each city, an unsupported city, a live-data refusal, an unknown price and an answer that fails validation. The current workflow can return a fallback; a useful future retry should change something in response to the failure reason rather than submitting the same deterministic prompt again.
+
 [Documentation index](README.md)

@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Fixed-query recommendation run
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  This is a latest-table pointer; use a timestamped `results/runs/` artifact for exact provenance.
+
 | ID | Facet | Constraints | Candidates | Top hit | Compliance |
 |---|---|---|---|---|---|
 | Q01 | cuisine | Philadelphia,Italian | 71 | L'Angolo Ristorante | ok |

@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | Mode | Mean wall (s) | Max wall (s) | Compliance failures | Empty |
 |---|---|---|---|---|
 | E1 BM25 | 0.007 | 0.013 | 0/12 | 0/12 |

@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Five-city corpus (5,968 restaurants), generated on 2026-11-03.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | ID | Facet | Outcome | Passed | Retries | Hits | Seconds |
 |---|---|---|---|---|---|---|
 | Q01 | cuisine | answered | True | 0 | 5 | 0.83 |

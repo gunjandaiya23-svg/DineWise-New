@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Fixed-query workflow evaluation
+
+Five-city corpus (5,968 restaurants), generated on 2026-11-03.  This is a latest-table pointer; use a timestamped `results/runs/` artifact for exact provenance.
+
 | ID | Facet | Outcome | Passed | Retries | Hits | Seconds |
 |---|---|---|---|---|---|---|
 | Q01 | cuisine | answered | True | 0 | 5 | 0.83 |

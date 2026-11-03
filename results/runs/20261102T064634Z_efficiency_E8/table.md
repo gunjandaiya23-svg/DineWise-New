@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | config | precision | adapter | load_seconds | ttft_ms | tpot_ms | tokens_per_second | peak_vram_gb | weights_gb |
 |---|---|---|---|---|---|---|---|---|
 | M1_fp16 | fp16 | False | 0.86 | 458.1 | 16.4 | 43.17 | 4.0 | 3.09 |

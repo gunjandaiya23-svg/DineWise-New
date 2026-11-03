@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | ID | Facet | Outcome | Passed | Retries | Hits | Seconds |
 |---|---|---|---|---|---|---|
 | Q01 | cuisine | answered | True | 0 | 5 | 9.18 |

@@ -1,6 +1,6 @@
 # DineWise documentation
 
-Start with **Run the app**, then **Architecture**. Read the remaining chapters when you need that part of the pipeline. Each guide describes current code; planned work is listed explicitly in the roadmap.
+Start with [Run the app](03-environment.md), then [Architecture](02-architecture.md). Read the remaining chapters when you need that part of the pipeline. Each guide describes current code; planned work is listed explicitly in the roadmap.
 
 | Guide | Topic |
 |---|---|
@@ -25,6 +25,16 @@ Start with **Run the app**, then **Architecture**. Read the remaining chapters w
 | [What the system cannot guarantee](19-risks-limitations.md) | Chapter 19 |
 | [Build and explain the report](20-report-deliverables.md) | Chapter 20 |
 | [Design decisions and source references](21-decisions-references.md) | Chapter 21 |
+
+## Choose a reading path
+
+- To **run the app**, read chapters 03, 02 and 11.
+- To **follow the data**, read chapters 04–09 in order.
+- To **understand an answer**, read chapters 10, 11 and appendix B.
+- To **evaluate RAG and fine-tuning**, read chapters 13–16, then the technical report.
+- To **change the implementation**, read chapters 17–19 and the decision log.
+
+Each chapter begins with the behavior it explains and points to its inputs and outputs. Result tables are measurements, not implementation instructions.
 
 ## References
 

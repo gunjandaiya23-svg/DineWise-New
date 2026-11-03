@@ -10,4 +10,10 @@ These are static records. Dataset ratings, prices and open/closed fields do not 
 
 The data derives from Yelp and is intended for educational, non-commercial research. The source is [the Hugging Face dataset](https://huggingface.co/datasets/wzehui/Yelp-Multimodal-Recommendation). Raw records and model artifacts stay out of git.
 
+## How to read the corpus counts
+
+`corpus.json` starts with 16,702 source businesses and 837,559 source reviews. Filtering the configured cities leaves 6,946 businesses; food-service selection and venue exclusion reduce this to 5,968 restaurants. The final review table has 382,253 reviews for those restaurants. These numbers are measured outputs of the current preparation run, so inspect the JSON after any configuration change.
+
+City coverage is determined from `restaurants.parquet`, which is also what the app sidebar reads. The five-city configuration has no numeric restaurant cap. A query for a city outside the catalogue is refused rather than silently searching another city. A missing price or attribute means the dataset did not record it; it does not imply an inexpensive restaurant or an absent amenity.
+
 [Documentation index](README.md)

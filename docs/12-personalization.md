@@ -8,4 +8,10 @@ Dietary terms are currently collected by extraction but are not hard filters. Me
 
 Future preference work should first define how explicit query constraints interact with defaults, then add tests for conflicting requests and missing fields. Persisted profiles and like/dislike ranking bonuses remain outside the current implementation.
 
+## How to phrase a request today
+
+Include each preference in the question itself: “quiet Italian restaurants in Tucson under $$.” The app displays previous turns but does not send them to the next search, so “same city as before” is not a reliable instruction. Exact supported fields, such as city and maximum price bucket, are filtered against the catalogue. “Cozy” can influence word/vector matching but should not be described as a guaranteed attribute unless the parser maps it to an implemented field.
+
+A query can contain conflicting terms or categories the catalogue lacks. The rule parser does not perform human-level clarification. Users should inspect the evidence panel and rephrase a request when the result misses a preference. The four `$` levels are relative dataset categories; they are not currency ranges. No personal profile is saved between sessions.
+
 [Documentation index](README.md)

@@ -21,4 +21,13 @@ The latest five-city comparison selected C4 by silver nDCG@5. The active configu
 
 Keep query sets, labels and corpus fixed within a comparison. Historical experiment IDs remain in output names for traceability. Removed visual retrieval and reranking experiments are not part of the current supported pipeline.
 
+## Reproducible comparison checklist
+
+1. Record the corpus audit and active chunk configuration. Rebuild indexes after corpus or chunk changes.
+2. Build or review the gold set for the same corpus and fixed queries. Mark whether labels are silver or manually judged.
+3. Change one variable per comparison: retrieval mode for retrieval evaluation, chunk configuration for C1–C4, or model/adapter for generation evaluation.
+4. Read the timestamped run JSON and table together. Note the input corpus and label source before comparing with an older run.
+
+The C4 five-city retrieval evaluation shows different winners depending on metric: hybrid strict Success@5 is 0.500, while BM25 nDCG@5 is 0.429 versus hybrid 0.420. The C4 selection comes from the separate chunking experiment in hybrid mode. Training and quantization tables come from older conditions until they are rerun.
+
 [Documentation index](README.md)

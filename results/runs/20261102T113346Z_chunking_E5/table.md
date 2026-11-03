@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | config | size | overlap | chunks | mean_tokens | chunks_with_multiple_markers | strict_success@k | strict_precision@k | strict_mrr | ndcg@k | index_bytes | seconds |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | C1 | 200 | 30 | 4132 | 211.600 | 0 | 0.333 | 0.117 | 0.229 | 0.420 | 6346797 | 17.620 |

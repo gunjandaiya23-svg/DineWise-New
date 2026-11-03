@@ -10,4 +10,10 @@ BM25 tokenizes words, lowercases them, removes a fixed stopword list and builds 
 
 At query time, BGE embeds the question with a retrieval prefix; FAISS compares that vector with chunk vectors. BM25 independently scores the query words. Both rankings refer to the same chunk IDs. Model name, sequence limit, corpus and chunk configuration must remain consistent between building and querying.
 
+## What is stored and what happens on a query
+
+Each FAISS row corresponds to one row in its `chunks.parquet`. Building the index normalizes BGE vectors and stores them in `IndexFlatIP`; at query time the same encoder converts the question to a vector with the configured prefix, and FAISS returns row positions and similarity scores. Loading the wrong chunk table for an index would attach a score to the wrong restaurant, so index and table must be built together.
+
+BM25 stores chunk IDs and word statistics. Its simple tokenizer removes English stopwords but does not understand synonyms the way embeddings can. The two methods can therefore retrieve different useful evidence. A query retrieves from both; Reciprocal Rank Fusion uses ranking positions instead of comparing incompatible raw scores. The active C4 dense index has 12,697 vectors of dimension 384.
+
 [Documentation index](README.md)

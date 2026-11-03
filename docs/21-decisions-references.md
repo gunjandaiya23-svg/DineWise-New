@@ -17,4 +17,10 @@ Primary source identifiers are `wzehui/Yelp-Multimodal-Recommendation`, `BAAI/bg
 
 When changing a decision, update this guide, the relevant technical chapter and any affected run instructions in the same commit.
 
+## How to revise a decision
+
+If a new judged evaluation selects a different chunk size, update the active config, rebuild its indexes, rerun a supported query in every city, and document the new selection metric and run ID. If LoRA becomes a runtime option, document how the app loads the adapter, what happens when it is absent, and which corpus trained it. If dietary filtering becomes hard, specify exactly which catalogue field provides the guarantee; review mentions alone do not.
+
+Use source dataset and model cards for dataset/model facts, local code for implemented behavior, and timestamped result JSON for measured claims. These sources answer different questions and should not be substituted for one another.
+
 [Documentation index](README.md)

@@ -1,80 +1,73 @@
 # DineWise
 
-A retrieval-augmented restaurant recommendation assistant, built as a controlled laboratory project.
+DineWise is a local restaurant recommendation research project. It searches a static dataset, retrieves restaurant and review evidence, and asks Qwen to write recommendations grounded in that evidence. The Streamlit app supports Philadelphia, Indianapolis, Tampa, New Orleans, and Tucson. It cannot book a table or provide live prices, menus, hours or availability.
 
-The system answers questions such as *"Find Italian restaurants with vegetarian options under $$ in Philadelphia"* by retrieving restaurant records and review evidence, then generating a grounded recommendation with sources.
+## Run the app
 
-This is a research prototype over a static dataset. It is **not** a booking system and does not provide live availability or prices.
-
-## Current corpus and comparisons
-
-The default corpus covers **Philadelphia, Indianapolis, Tampa, New Orleans, and
-Tucson**, with no 500-restaurant pilot cap. The prepared corpus contains 5,968
-restaurants and 382,253 reviews.
-
-Supported comparisons: BM25 / dense / hybrid RAG, C1–C4 chunking, base versus
-LoRA generation, and FP16 / INT4 / INT8 quantization benchmarks.
-Historical results under `results/` and the report describe the earlier pilot;
-they are not measurements of the expanded corpus. Rerun evaluations after a rebuild.
-C4 is the active chunk configuration after the five-city comparison (silver nDCG@5: 0.420).
-Labels are automatically generated silver judgments; manual review remains needed.
-
-## Quickstart
+From the repository root, with the prepared data and indexes already present:
 
 ```bash
-make setup        # create .venv (Python 3.12) and install dependencies
-make check        # verify GPU, packages, and paths
-make download     # fetch the dataset into data/raw with checksum verification
-make prep         # clean the data and build data/processed/restaurants.parquet
-make docs         # generate TXT restaurant evidence profiles
-make chunks       # restaurant-aware token chunking
-make index        # BGE embeddings + FAISS index
-make bm25         # BM25 lexical index over the same chunks
-make queries      # 15-query suite (12 answered + 3 refusals)
-make experiments  # E1/E2/E3: BM25 vs dense vs hybrid comparison
+make app
 ```
 
-To rebuild all four configurations for the five-city corpus, run `make rebuild`.
-Use `make chunking-eval` to compare them (or add `--reuse-indexes` to
-`scripts/13_chunking_experiments.py` to evaluate existing indexes).
-Install training dependencies with `uv pip install --python .venv/bin/python -e ".[tuning]"`
-before running `make lora-train` or quantization benchmarks.
+Open `http://localhost:8501` if a browser does not open automatically. Ask, for example, **“Italian restaurants in Tampa under $$.”** The chat shows a response, a catalogue-backed price and rating summary, and expandable restaurant records and evidence excerpts. The sidebar explains `$` through `$$$$` as relative price buckets; they are not exact meal prices. The first supported request loads Qwen and can be slower. Stop the server with Ctrl+C.
 
-Then:
+If you have a fresh checkout without `.venv` or local data, follow [the environment guide](docs/03-environment.md). The short sequence is:
 
 ```bash
-make app          # launch the app
-make test         # run unit tests
-make lint         # ruff
+make setup       # Python 3.12 environment and app dependencies
+make check       # Verify packages, CUDA and paths
+make download    # Fetch source CSV files if absent
+make rebuild     # Prepare five cities and build C1–C4 FAISS/BM25 indexes
+make app
 ```
 
-## Repository layout
+`make rebuild` can take several minutes. Restart Streamlit after a rebuild because it caches loaded resources.
 
-```
-config/          configuration and taxonomy
-data/            raw downloads, processed tables, documents, indexes (gitignored)
-docs/            the project plan, one file per concern
-scripts/         numbered pipeline steps
-src/dinewise/    library code
-tests/           unit tests for the data and validation layers
-app/             simple Streamlit query interface
-results/         run manifests and result tables
+## What happens to a question
+
+```text
+Question → scope check → parse city/cuisine/price/attributes
+         → filter restaurant catalogue → BGE/FAISS + BM25 search
+         → RRF fusion → up to five distinct restaurant records
+         → Qwen answer → validation → answer or fallback
 ```
 
-## Documentation
+A query is searched independently; displayed earlier chat messages are not passed to the next search. Business IDs stay in internal validation and source panels but are hidden from the main answer. A hard validation failure triggers one deterministic regeneration attempt, which can repeat the same text. [Architecture](docs/02-architecture.md) and [query workflow](docs/11-workflow.md) explain each step with examples.
 
-Start at [`docs/README.md`](docs/README.md). The plan is intentionally split by concern:
+## Current data and comparisons
 
-- [Overview and research questions](docs/01-overview.md)
-- [Dataset and study corpus](docs/04-dataset.md)
-- [Data engineering](docs/05-data-engineering.md)
-- [Evaluation framework](docs/15-evaluation.md)
-- [Roadmap](docs/18-roadmap.md)
+The prepared corpus contains **5,968 restaurants and 382,253 reviews** across the five configured cities, with no 500-restaurant cap. C4 is the active chunk configuration; its five-city hybrid retrieval nDCG@5 was 0.420 on automatically generated silver labels. In the current C4 retrieval comparison, hybrid has higher strict Success@5 (0.500), while BM25 has slightly higher nDCG@5 (0.429 versus 0.420). These are different measures, and labels still need human review.
 
-## Data
+The project preserves research comparisons for BM25/dense/hybrid retrieval, C1–C4 chunking, base versus LoRA generation with and without RAG, and FP16/INT8/INT4 performance. The app uses **base Qwen with RAG**; it does not load the trained LoRA adapter. Existing adapter and quantization results predate the five-city expansion and have not been rerun on the new corpus. The [technical report](report/DineWise_Report.md) distinguishes current and historical measurements.
 
-The project uses the [Yelp Multimodal Recommendation dataset](https://huggingface.co/datasets/wzehui/Yelp-Multimodal-Recommendation), derived from the [Yelp Open Dataset](https://www.yelp.com/dataset). It is intended for educational, non-commercial research only. Raw data is not redistributed with this repository.
+Useful commands:
 
-## License
+```bash
+make test             # Unit and regression tests
+make lint             # Static code checks
+make goldset          # Rebuild silver labels for the prepared corpus
+make retrieval-eval   # BM25, dense and hybrid metrics
+make graph            # Fixed query suite in template mode
+make model-eval       # Base/LoRA, with and without retrieval
+make efficiency       # Precision and adapter benchmarks
+make report           # Regenerate the technical report from current artifacts
+```
 
-Code: to be decided. Data: Yelp Open Dataset terms, non-commercial research use only.
+`make chunking-eval` rebuilds configurations during evaluation. To compare already built indexes, run `.venv/bin/python scripts/13_chunking_experiments.py --reuse-indexes`. LoRA and quantization commands need the `[tuning]` extras described in [fine-tuning](docs/13-finetuning.md).
+
+## Repository map
+
+| Location | Purpose |
+|---|---|
+| `app/` and `.streamlit/` | Chat interface and theme |
+| `src/dinewise/data/` | Cleaning and evidence profile construction |
+| `src/dinewise/rag/` | Chunking, constraints, indexes and retrieval |
+| `src/dinewise/llm/` | Prompts, Qwen generation and validation |
+| `src/dinewise/graph/` | Plain Python workflow, under a historical folder name |
+| `scripts/` | Build, training, evaluation and reporting commands |
+| `config/` | Corpus, model, chunking and retrieval settings |
+| `data/` | Local source files and generated data; large inputs are gitignored |
+| `results/` | Timestamped experiment artifacts and latest tables |
+
+Start with [the documentation index](docs/README.md) for the complete technical guides, output references, limitations and current roadmap. The dataset is [Yelp Multimodal Recommendation](https://huggingface.co/datasets/wzehui/Yelp-Multimodal-Recommendation), derived from Yelp data for educational, non-commercial research. Raw data is not redistributed here. The code license has not yet been chosen; dataset usage is governed by its source terms.

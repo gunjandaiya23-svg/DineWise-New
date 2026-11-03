@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | Mode | Strict Success@5 | Strict P@5 | Strict MRR | nDCG@5 | Any Success@5 |
 |---|---|---|---|---|---|
 | bm25 | 0.250 | 0.100 | 0.183 | 0.406 | 1.000 |

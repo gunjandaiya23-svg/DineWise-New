@@ -10,4 +10,10 @@ Use the same hardware, corpus, prompt, token budget and adapter when comparing r
 
 Historical efficiency tables remain available. They were not rerun automatically when the corpus expanded. Keep them separate from new measurements and describe their original conditions in the report.
 
+## Interpret the measurements
+
+The benchmark's table distinguishes model load time, time until the first output token, time per later token, tokens per second, peak GPU memory and approximate loaded weight size. These measure different costs. A model may load quickly but decode slowly, or reduce memory while doing more work per token. Compare one column at a time under the same device and prompt.
+
+The old pilot measurement, for example, recorded about 43 tokens/s for base FP16 and about 13 tokens/s for INT8 on that hardware; this is an observation from that run, not a general property of INT8. The LoRA adapter can add latency even when it is small. The fixed Philadelphia prompt makes the modes comparable but does not measure workload variation across all five cities.
+
 [Documentation index](README.md)

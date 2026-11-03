@@ -16,4 +16,10 @@ Filtering removes chunks outside the eligible IDs after fusion. The system colla
 
 The output contains hits, constraints, filter counts and timing diagnostics. No hits leads to a fallback instead of an invented recommendation. Cross-encoder reranking and rating-prior reranking have been removed.
 
+## Follow one constrained search
+
+For “Italian in Tampa under $$”, filtering starts with all 5,968 restaurants, retains Tampa, then Italian cuisine, then recorded price buckets at most 2. The eligible business IDs are the final exact filter. Dense and BM25 ranking still search chunks, but the pipeline retains only chunks whose restaurant is eligible. A matching excerpt from a different city cannot enter the final answer.
+
+RRF gives a chunk a contribution of `1/(60 + rank)` from each ranking in which it appears. A chunk ranked well by both methods gains more fused score than one seen only near the bottom of one list. After filtering, chunks collapse to distinct restaurants and the top five are sent to Qwen. If there are no eligible or retrieved restaurants, the workflow explains that the request could not be satisfied. Dietary terms currently do not impose this exact filtering behavior.
+
 [Documentation index](README.md)

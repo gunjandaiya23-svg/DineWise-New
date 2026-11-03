@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Bm25, dense and hybrid retrieval comparison
+
+Historical pilot experiment. Its counts and scores describe the earlier run, not the current five-city app.  This is a latest-table pointer; use a timestamped `results/runs/` artifact for exact provenance.
+
 | Mode | Mean wall (s) | Max wall (s) | Compliance failures | Empty |
 |---|---|---|---|---|
 | E1 BM25 | 0.007 | 0.013 | 0/12 | 0/12 |

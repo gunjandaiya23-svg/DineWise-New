@@ -1,3 +1,8 @@
+<!-- DineWise result context -->
+# Experiment result
+
+Five-city corpus (5,968 restaurants), generated on 2026-11-03.  See [the run JSON](results.json) for per-query data and available provenance.
+
 | Mode | Strict Success@5 | Strict P@5 | Strict MRR | nDCG@5 | Any Success@5 |
 |---|---|---|---|---|---|
 | bm25 | 0.250 | 0.083 | 0.194 | 0.396 | 1.000 |

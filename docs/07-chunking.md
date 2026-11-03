@@ -17,4 +17,10 @@ C4 is active after the five-city comparison and produces 12,697 chunks. The embe
 
 Contamination checks count chunks containing multiple restaurant markers. Evaluate all sizes against the same queries and labels.
 
+## Why the marker and overlap matter
+
+A restaurant profile can exceed one model input window. The chunker starts a new token window before the previous one ends, so a phrase near a boundary can appear in both chunks. Its restaurant marker is repeated on each output chunk; retrieval can therefore map a matching excerpt back to its business. The contamination report verifies that a chunk does not contain multiple restaurant markers.
+
+For the five-city corpus, C1/C2/C3/C4 produced 46,576 / 24,712 / 17,567 / 12,697 chunks. Larger targets usually produce fewer chunks and smaller indexes, but they can contain more unrelated text and exceed BGE's 512-token input limit. The latest silver-label comparison chose C4 by hybrid nDCG@5; that result is specific to this corpus, query set, and metric. Rebuild indexes after changing window settings.
+
 [Documentation index](README.md)

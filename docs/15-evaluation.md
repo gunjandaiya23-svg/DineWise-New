@@ -10,4 +10,10 @@ Retrieval compliance checks assess catalogue membership and selected constraints
 
 The query suite has 12 answerable questions and three refusal scenarios. It covers all five cities but remains small. Do not present these scores as broad real-world performance estimates. Bootstrap intervals, RAGAS and NLI validation are not implemented in the current pipeline.
 
+## Read a score carefully
+
+Suppose five results contain two relevant restaurants. Precision@5 is `2/5 = 0.4`. If the first relevant result is rank 2, reciprocal rank is `1/2 = 0.5` for that question. nDCG also considers graded relevance and position; a highly relevant restaurant at rank 1 is rewarded more than the same one at rank 5. The code averages per-query values for the result table.
+
+The current C4 retrieval table reports silver nDCG@5 of 0.429 for BM25, 0.388 for dense, and 0.420 for hybrid. Hybrid has higher strict Success@5 in that run, while BM25 has slightly higher nDCG@5. These are different metrics, so neither result should be flattened into “hybrid is best overall.” The chunking comparison selected C4 by hybrid nDCG@5 across chunk configurations. Human review of the silver labels remains an open task.
+
 [Documentation index](README.md)
