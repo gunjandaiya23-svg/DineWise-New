@@ -37,50 +37,95 @@ def load_graph():
 
 
 def render_result(state: dict) -> None:
-    answer = state.get("answer", "")
-    st.markdown(answer)
+    st.markdown(state.get("answer", ""))
+    hits = state.get("hits", [])
+    if hits:
+        with st.expander("Restaurant records used"):
+            for hit in hits:
+                row = hit["chunk"]
+                price = row.get("price_range")
+                label = "$" * int(price) if pd.notna(price) else "unknown"
+                st.markdown(f"**{row.get('restaurant_name', 'Restaurant')}** — "
+                            f"{row.get('city', '')} · {row.get('cuisine_primary', '')} · "
+                            f"Price: {label} · Dataset rating: {row.get('stars', 'unknown')}")
+                st.caption(f"Business ID: {row['business_id']}")
+        with st.expander("Retrieved evidence excerpts"):
+            st.caption("Profile excerpts may include summaries and selected customer reviews.")
+            for hit in hits:
+                row = hit["chunk"]
+                st.markdown(f"**{row.get('restaurant_name', 'Restaurant')}**")
+                st.text(str(row.get("text", "")))
 
 
 def main() -> None:
     st.set_page_config(page_title="DineWise", page_icon="🍽️", layout="wide")
-    st.title("DineWise")
-    st.caption(
-        "Retrieval-augmented restaurant recommendations over a static dataset. "
-        "Ratings and prices are dataset values, not live information."
-    )
+    css = (Path(__file__).with_name("style.css")).read_text()
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    st.markdown("""
+<section class="hero">
+<div class="hero-copy"><p class="hero-kicker">Your table, your taste</p>
+<h1>DineWise</h1><p>Find your next favorite bite, backed by the stories people share about their meals.</p></div>
+<div class="hero-art" aria-hidden="true">🍝</div>
+</section>
+""", unsafe_allow_html=True)
 
-    _, restaurants, _, _, _ = load_assets()
-    cities = sorted(restaurants["city"].dropna().unique())
-    st.caption("Available cities: " + ", ".join(cities))
+    try:
+        _, restaurants, _, _, _ = load_assets()
+        graph = load_graph()
+    except Exception:
+        st.error("DineWise could not load its local data or models. Check the terminal for details.")
+        st.code("make setup\nmake download\nmake rebuild\nmake app", language="bash")
+        import logging
+        logging.getLogger(__name__).exception("Could not initialize DineWise")
+        st.stop()
 
-    tab_recommend, tab_about = st.tabs(["Recommend", "About"])
+    with st.sidebar:
+        st.subheader("🥄 A little about DineWise")
+        st.caption("Local restaurant discovery, made for curious appetites.")
+        st.divider()
+        st.markdown("**Explore five cities**")
+        for city in sorted(restaurants["city"].dropna().unique()):
+            st.write(f"📍 {city}")
+        st.caption(f"{len(restaurants):,} restaurants in the dataset")
+        st.markdown("**A quick note**")
+        st.caption("Ratings and prices are static dataset values. Price buckets are not exact prices. "
+                   "Review-based dietary claims are not guarantees.")
+        st.caption("Each question is searched independently. Include your city and preferences each time.")
+        if st.button("Clear conversation"):
+            st.session_state.messages = []
+            st.rerun()
 
-    with tab_recommend:
-        query = st.text_input(
-            "What are you looking for?",
-            placeholder="Try: Italian restaurants in Tampa under $$",
-        )
-        if st.button("Recommend", type="primary") and query.strip():
-            graph = load_graph()
-            with st.spinner("Searching the dataset ..."):
-                state = run_query(graph, query)
-            render_result(state)
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    if not st.session_state.messages:
+        st.markdown("""
+<div class="welcome-card"><h3>What sounds good today?</h3>
+<p>Tell me your city, what you're craving, your budget, or the atmosphere you're after.</p>
+<p class="prompt-chips">🍝 Italian in Tampa · 🕯️ Quiet dinner in Tucson · 💸 Philadelphia under $$</p></div>
+""", unsafe_allow_html=True)
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            if message["role"] == "assistant":
+                render_result(message["state"])
+            else:
+                st.markdown(message["content"])
 
-    with tab_about:
-        st.markdown(
-            """
-DineWise is a laboratory prototype, not a booking service.
-
-**What it can do**
-- Recommend restaurants by cuisine, city, budget bucket, rating, and attributes.
-- Quote review evidence for each result.
-- Refuse live-availability, unknown-city, and unrecorded-amenity questions.
-
-**What it cannot do**
-- Provide live availability, reservations, current prices, or wait times.
-- Guarantee dietary safety.
-"""
-        )
+    query = st.chat_input("e.g. Italian restaurants in Tampa under $$")
+    if query and query.strip():
+        st.session_state.messages.append({"role": "user", "content": query})
+        with st.chat_message("user"):
+            st.markdown(query)
+        with st.chat_message("assistant"):
+            with st.spinner("Finding restaurants and reading the evidence…"):
+                try:
+                    state = run_query(graph, query)
+                except Exception:
+                    import logging
+                    logging.getLogger(__name__).exception("Recommendation failed")
+                    state = {"answer": "I couldn't complete that search. Please try again; "
+                             "if it keeps failing, check the server terminal."}
+                render_result(state)
+                st.session_state.messages.append({"role": "assistant", "state": state})
 
 
 if __name__ == "__main__":

@@ -8,6 +8,6 @@ The app loads Qwen2.5-1.5B-Instruct lazily in FP16 with automatic device placeme
 
 Validation rejects IDs outside the retrieved candidates, flags live-information language, and checks cited restaurants against the maximum price constraint. Missing IDs and unmatched bold-formatted names are soft failures. Only hard failures block an answer.
 
-These checks do not prove every sentence is supported. A response with no IDs can pass with a soft warning. The app currently displays the answer without exposing those diagnostics. See the limitations chapter before interpreting validation-pass rates as factual accuracy.
+These checks do not prove every sentence is supported. A response with no IDs can pass with a soft warning. The app displays the answer and expandable evidence without exposing validation diagnostics. See the limitations chapter before interpreting validation-pass rates as factual accuracy.
 
 [Documentation index](README.md)

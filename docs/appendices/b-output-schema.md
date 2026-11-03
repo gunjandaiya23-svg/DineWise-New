@@ -14,6 +14,6 @@ The generated answer is a Markdown string, not a JSON object. The workflow retur
 | `fallback_used` | Whether the final response came from fallback logic |
 | `trace` | Step descriptions used in diagnostics |
 
-Not every path populates every field. A scope refusal can happen before constraints or hits exist, so callers should use `.get()` for optional values. The constraints object is not directly JSON serializable without conversion. Streamlit currently renders only the answer and available city coverage.
+Not every path populates every field. A scope refusal can happen before constraints or hits exist, so callers should use `.get()` for optional values. The constraints object is not directly JSON serializable without conversion. Streamlit renders the answer, city coverage and expandable restaurant records and evidence excerpts.
 
 [Documentation index](../README.md)

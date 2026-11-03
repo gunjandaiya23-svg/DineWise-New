@@ -12,5 +12,8 @@ Validation checks grounding and constraint compliance. A failed answer can be
 regenerated once. Budget and attribute requirements remain unchanged. Empty
 retrieval and repeated validation failures produce an explanatory fallback.
 
-The app shows the query, supported cities, and resulting answer. Profiles, raw
-ranking tables, model toggles, and developer traces are no longer UI controls.
+The app uses a warm light chat layout with supported cities in the sidebar.
+Session history keeps questions, answers, restaurant records and evidence excerpts.
+Each question is searched independently; earlier messages are not passed to Qwen.
+Clear conversation resets the session history. Profiles, raw ranking tables, model
+toggles and developer traces are not exposed as controls.

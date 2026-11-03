@@ -1,0 +1,22 @@
+:root { --cream:#fffaf1; --ink:#3c3028; --muted:#85766b; --tomato:#d96545; --sage:#71846a; }
+.stApp { background:radial-gradient(ellipse at 85% 4%,rgba(245,220,179,.28),transparent 28rem),var(--cream); color:var(--ink); font-family:Inter,'Segoe UI',sans-serif; }
+[data-testid="stHeader"] { background:transparent; }
+[data-testid="stMainBlockContainer"] { max-width:1080px; padding-top:2rem; }
+.hero { display:flex; align-items:center; justify-content:space-between; overflow:hidden; margin:0 0 1.5rem; padding:2rem 2.25rem; border:1px solid #f1e4d1; border-radius:28px; background:linear-gradient(115deg,#fff4e3 0%,#fffaf1 62%,#f6eee0 100%); box-shadow:0 12px 32px rgba(90,62,38,.06); }
+.hero-kicker { margin:0 0 .45rem; color:var(--sage); font-size:.75rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+.hero h1 { margin:0; color:var(--ink); font-family:Georgia,serif; font-size:clamp(2.4rem,5vw,3.5rem); letter-spacing:-.04em; line-height:1.08; }
+.hero-copy > p:last-child { max-width:540px; margin:.7rem 0 0; color:var(--muted); font-size:1rem; line-height:1.6; }
+.hero-art { margin-left:1rem; font-size:clamp(4rem,9vw,6.5rem); filter:drop-shadow(0 10px 10px rgba(90,62,38,.12)); transform:rotate(-8deg); }
+.welcome-card { margin:1.25rem 0; padding:1.25rem 1.5rem; border:1px solid #eadfce; border-radius:20px; background:rgba(255,255,255,.72); }
+.welcome-card h3 { margin:0 0 .4rem; color:var(--ink); font-family:Georgia,serif; font-size:1.35rem; }
+.welcome-card p { margin:0; color:var(--muted); line-height:1.6; }
+.prompt-chips { margin-top:.8rem !important; color:var(--sage) !important; font-size:.9rem; }
+[data-testid="stSidebar"] { border-right:1px solid #eee2d1; background:#f7f0e5; }
+[data-testid="stSidebar"] p { color:#67594e; line-height:1.55; }
+[data-testid="stChatMessage"] { margin-bottom:.8rem; padding:1rem 1.15rem; border:1px solid #eee5d9; border-radius:20px; background:rgba(255,255,255,.76); box-shadow:0 4px 14px rgba(90,62,38,.035); }
+[data-testid="stBottom"] > div { background:var(--cream); }
+[data-testid="stChatInput"] { border:1px solid #e8d9c5; border-radius:18px; background:white; box-shadow:0 8px 26px rgba(90,62,38,.08); }
+[data-testid="stChatInput"] textarea { font-family:Inter,'Segoe UI',sans-serif; }
+[data-testid="stChatInput"] button { border-radius:12px; background:var(--tomato); color:white; }
+h2,h3 { color:var(--ink); }
+@media(max-width:640px) { [data-testid="stMainBlockContainer"] { padding-top:1rem; } .hero { padding:1.5rem; border-radius:22px; } .hero-art { font-size:3.5rem; } }
