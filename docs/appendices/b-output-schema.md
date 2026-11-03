@@ -1,60 +1,19 @@
-# Appendix B — Output schema
+# What the workflow returns
 
-> Part of the DineWise project plan. Operational reference for implementation.
-> See [the plan index](../README.md) for the full reading order.
+The generated answer is a Markdown string, not a JSON object. The workflow returns a Python dictionary containing that string and internal diagnostics.
 
----
+| Key | Meaning |
+|---|---|
+| `query` | Original user text |
+| `constraints` | Parsed Constraints dataclass |
+| `hits` | Retrieved records as score/chunk dictionaries |
+| `answer` | Recommendation or fallback text |
+| `passed`, `validation` | Answer checks and hard/soft failures |
+| `retry_count` | Number of generation retries |
+| `out_of_scope`, `refused`, `reason` | Scope and retrieval refusal information |
+| `fallback_used` | Whether the final response came from fallback logic |
+| `trace` | Step descriptions used in diagnostics |
 
+Not every path populates every field. A scope refusal can happen before constraints or hits exist, so callers should use `.get()` for optional values. The constraints object is not directly JSON serializable without conversion. Streamlit currently renders only the answer and available city coverage.
 
-```json
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "required": ["recommendations", "insufficient_evidence"],
-  "additionalProperties": false,
-  "properties": {
-    "recommendations": {
-      "type": "array",
-      "maxItems": 5,
-      "items": {
-        "type": "object",
-        "required": [
-          "business_id", "name", "cuisine", "price_bucket",
-          "rating", "evidence", "explanation", "sources"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "business_id": {"type": "string"},
-          "name": {"type": "string"},
-          "cuisine": {"type": "string"},
-          "price_bucket": {"type": "integer", "minimum": 1, "maximum": 4},
-          "rating": {"type": "number", "minimum": 1, "maximum": 5},
-          "evidence": {
-            "type": "array",
-            "maxItems": 3,
-            "items": {
-              "type": "object",
-              "required": ["review_id", "quote"],
-              "additionalProperties": false,
-              "properties": {
-                "review_id": {"type": "string"},
-                "quote": {"type": "string", "minLength": 10, "maxLength": 400}
-              }
-            }
-          },
-          "explanation": {"type": "string", "minLength": 20, "maxLength": 600},
-          "sources": {
-            "type": "array",
-            "items": {"type": "string"},
-            "minItems": 1
-          }
-        }
-      }
-    },
-    "insufficient_evidence": {"type": "boolean"},
-    "notes": {"type": "string", "maxLength": 400}
-  }
-}
-```
-
----
+[Documentation index](../README.md)

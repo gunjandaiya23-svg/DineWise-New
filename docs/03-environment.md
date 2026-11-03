@@ -1,22 +1,23 @@
-# Environment
+# Run the app and prepare the environment
 
-> Part of the DineWise project plan. Hardware, Python, dependencies, and runtime decisions.
-> See [the plan index](README.md) for the full reading order.
+From the repository root, run:
 
----
+```bash
+make app
+```
 
-## 2.1 Environment
+Open http://localhost:8501 and enter a query such as “Italian restaurants in Tampa under $$”. Stop the server with Ctrl+C. The existing data and indexes are ready; normal startup does not rebuild them.
 
-| Item | Value | Consequence |
-|---|---|---|
-| Working directory | `/home/naimish08/Desktop/DineWise` (empty at planning time) | Greenfield repository |
-| GPU | NVIDIA GeForce RTX 4060 Laptop, 8,188 MiB VRAM, driver CUDA 13.2 | Sufficient for 1.5B FP16 inference, QLoRA, INT8/INT4 |
-| System RAM | 22 GiB total, ~15 GiB available | Comfortable for pandas over the full review file; avoid loading multiple large models simultaneously |
-| CPU | 20 logical cores | PDF generation and tokenization are not bottlenecks |
-| Disk | 179 GiB free on `/` | Dataset (~1.3 GB), models (~6 GB), indexes (<1 GB) all fit comfortably |
-| Default Python | 3.14.4 | **Unusable** for the ML stack; torch, faiss, and bitsandbytes do not publish 3.14 wheels |
-| Available Python | 3.12 via `python3.12`, plus `uv` | Build the project environment with Python 3.12 |
+The project requires Python 3.12. The current embedding configuration uses CUDA. For a new installation with uv available, run `make setup` and `make check`. Setup creates `.venv`, installs CUDA-enabled PyTorch and the app dependencies. It does not download and prepare the restaurant corpus.
 
-**Decision:** create a project-local virtual environment with `uv venv --python 3.12`, install CUDA-enabled PyTorch from the PyTorch wheel index, then freeze exact versions into `requirements.lock`. Never install into the system interpreter. Set `HF_HOME` and the model cache to a persistent project or home directory rather than `/tmp`.
+If raw data is absent, run `make download`. Then `make rebuild` prepares all five cities and all four sets of indexes. This takes substantially longer than launching the app.
 
-**Decision:** develop locally on the RTX 4060. A Colab notebook may be generated later as a submission artifact, but it is not the primary runtime. Local execution avoids session limits and keeps the dataset and indexes persistent.
+Training and quantization need additional packages:
+
+```bash
+uv pip install --python .venv/bin/python -e ".[tuning]"
+```
+
+Streamlit caches resources in the running process. Qwen loads lazily on the first supported recommendation. Restart the app after rebuilding indexes to clear cached assets.
+
+[Documentation index](README.md)

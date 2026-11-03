@@ -1,15 +1,12 @@
-# The project plan lives in docs/, one file per concern.
-# This file is kept as a stable pointer for links and notes.
+# DineWise working plan
 
-Start here: [docs/README.md](docs/README.md)
+The current implementation and next tasks are explained in [the roadmap](docs/18-roadmap.md).
+Start with [the documentation index](docs/README.md) for runnable commands and architecture.
 
-| Need | Read |
-|---|---|
-| What the project is and why | [docs/01-overview.md](docs/01-overview.md) |
-| Verified dataset facts | [docs/04-dataset.md](docs/04-dataset.md) |
-| Architecture | [docs/02-architecture.md](docs/02-architecture.md) |
-| Implementation order | [docs/19-roadmap.md](docs/19-roadmap.md) |
-| Experiment design | [docs/17-experiments.md](docs/17-experiments.md) |
-| Evaluation protocol | [docs/16-evaluation.md](docs/16-evaluation.md) |
+Completed: simplify the app and workflow, expand to five cities, rebuild C1–C4,
+compare chunking/retrieval, and rewrite the guides around actual behavior.
 
-Do not add new plan content here. Add it to the relevant file in `docs/`.
+Next: review silver labels, regenerate training examples for the expanded corpus,
+audit evidence overlap across splits, train a new adapter, rerun model/precision
+comparisons, then improve validation and retry behavior. Keep each change in a
+focused commit with relevant checks. These are planned tasks, not completed results.

@@ -1,37 +1,23 @@
-# Appendix F — Glossary
+# Terms used in the guides
 
-> Part of the DineWise project plan. Operational reference for implementation.
-> See [the plan index](../README.md) for the full reading order.
-
----
-
-
-| Term | Meaning |
+| Term | Plain meaning |
 |---|---|
-| **RAG** | Retrieval-Augmented Generation: retrieve context, then generate an answer grounded in it. |
-| **Chunk** | A segment of a document small enough to embed and retrieve. |
-| **Embedding** | A dense vector representation of text or an image. |
-| **FAISS** | A library for efficient similarity search over dense vectors. |
-| **BM25** | A lexical ranking function based on term frequency and inverse document frequency. |
-| **RRF** | Reciprocal Rank Fusion: merge ranked lists by summing reciprocal ranks. |
-| **Cross-encoder** | A reranker that scores a query–document pair jointly. |
-| **nDCG@k** | Normalized discounted cumulative gain at k, supporting graded relevance. |
-| **MRR** | Mean reciprocal rank of the first relevant result. |
-| **Success@k** | Whether at least one relevant item appears in the top k. |
-| **Faithfulness** | The degree to which an answer is supported by the retrieved context. |
-| **Hallucination** | A claim not supported by the supplied evidence. |
-| **Abstention** | Refusing to answer when evidence is insufficient. |
-| **LoRA** | Low-Rank Adaptation: train small adapter matrices instead of the full model. |
-| **QLoRA** | LoRA on a quantized base model. |
-| **INT8 / INT4** | Reduced-precision model weights. |
-| **TTFT** | Time to first generated token. |
-| **TPOT** | Time per output token. |
-| **CLIP** | A model that maps images and text into a shared embedding space. |
-| **Zero-shot classification** | Predicting classes without task-specific training, using text prompts. |
-| **Tri-state attribute** | A value that is true, false, or unknown; unknown is not false. |
-| **Gold set** | A manually judged query set used for evaluation. |
-| **Ablation** | Removing or changing one component to measure its contribution. |
+| RAG | Retrieve evidence and include it in the model prompt |
+| Chunk | A searchable piece of one restaurant's evidence |
+| Token | A text unit used by a model tokenizer |
+| Embedding | Numerical vector representing text |
+| FAISS | Library used to search vectors |
+| BM25 | Word-based document ranking method |
+| RRF | Method that combines positions in ranked lists |
+| Constraint | A requirement parsed from a user query |
+| Grounding | Supporting an answer with supplied evidence |
+| LoRA | Small trainable adapter added to a base model |
+| QLoRA | LoRA training with a quantized base model |
+| Quantization | Lower-precision model weight storage/computation |
+| Silver labels | Automatically generated relevance judgments |
+| nDCG | Metric rewarding relevant results near the top |
+| MRR | Metric rewarding an early first relevant result |
+| Parquet | Column-oriented file format used for tables |
+| Fallback | Fixed explanatory response when the workflow cannot answer |
 
----
-
-*End of plan.*
+[Documentation index](../README.md)

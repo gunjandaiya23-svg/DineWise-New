@@ -1,54 +1,13 @@
-# Appendix E — Result table templates
+# Read result artifacts correctly
 
-> Part of the DineWise project plan. Operational reference for implementation.
-> See [the plan index](../README.md) for the full reading order.
+Timestamped directories under `results/runs/` preserve individual experiment outputs. Tables under `results/tables/` point to recent summaries and can be overwritten by later runs.
 
----
+Read the JSON beside a table to identify the corpus, label source, model settings and per-query details available for that run. Some historical artifacts lack complete provenance. Do not substitute current settings for missing historical metadata.
 
+Chunking tables compare sizes, overlap, chunk count, contamination and retrieval metrics. Retrieval tables compare BM25, dense and hybrid ranking. Model tables compare base/LoRA with and without RAG. Efficiency tables compare numerical precision and adapter use.
 
-### E.1 Data audit
+When indexes are reused in chunking evaluation, the `seconds` column comes from stored embedding time; it is not total end-to-end rebuilding time. In a normal fresh chunking evaluation it measures the build operation. Avoid comparing those timing columns across the two execution modes.
 
-| Step | Restaurants | Reviews | Duplicates | Missing rating | Missing price | Notes |
-|---|---:|---:|---:|---:|---:|---|
-| Raw | 16,702 | 837,559 | | | | |
-| Five-city filter | 6,946 | 414,952 | | | | |
-| Food-service filter | 6,033 | 385,065 | | | | |
-| Final cleaned | | | | | | |
+Silver relevance metrics and validation-pass rates are different measurements. Include their definitions and limitations with any exported chart or report.
 
-### E.2 Chunking
-
-| Config | Size | Overlap | Chunks | Mean tokens | Min | Max | Cross-restaurant | Metadata complete |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| C1 | 200 | 30 | | | | | | |
-| C2 | 400 | 60 | | | | | | |
-| C3 | 600 | 90 | | | | | | |
-| C4 | 800 | 120 | | | | | | |
-
-### E.3 Retrieval
-
-| Exp | Config | Success@5 | P@5 | MRR | nDCG@5 | Latency p50 | Latency p95 |
-|---|---|---:|---:|---:|---:|---:|---:|
-| E1 | BM25 | | | | | | |
-| E2 | Dense | | | | | | |
-| E3 | Hybrid | | | | | | |
-| E4 | + rerank | | | | | | |
-
-### E.4 Generation
-
-| System | Format valid | Constraint satisfaction | Faithfulness | Unsupported claims | Fallback correctness |
-|---|---:|---:|---:|---:|---:|
-| Base, no RAG | | | | | |
-| + RAG | | | | | |
-| + RAG + LoRA | | | | | |
-| + LoRA, no RAG | | | | | |
-
-### E.5 Efficiency
-
-| Config | Disk | Peak VRAM | TTFT | TPOT | Tokens/s | nDCG@5 | Faithfulness |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| FP16 | | | | | | | |
-| INT8 | | | | | | | |
-| INT4 | | | | | | | |
-| LoRA-4bit | | | | | | | |
-
----
+[Documentation index](../README.md)
