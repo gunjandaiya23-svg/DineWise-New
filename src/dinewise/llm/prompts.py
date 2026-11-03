@@ -22,7 +22,7 @@ Rules:
    mention the restaurant name or ID.
 5. If the records do not contain enough evidence, say so explicitly.
 6. Prefer fewer, well-supported recommendations over more, weakly supported ones.
-7. Keep the answer under 250 words. Use a short numbered list."""
+7. Keep the answer under 180 words. Use a short numbered list."""
 
 
 def _value(record: dict[str, Any], key: str, default: str = "unknown") -> str:
@@ -72,8 +72,10 @@ RESTAURANT RECORDS:
 
 TASK:
 Recommend up to 3 restaurants from the records above. For each one, give the
-name, the business ID, why it matches the question, and note that ratings and
-prices are dataset values. If the records do not support an answer, say so.
+name, business ID, and one short sentence explaining the match. Include rating
+and price only when supported. Avoid repeated headings and nested bullet lists.
+Finish every recommendation before ending. State once that ratings and prices
+are dataset values. If the records do not support an answer, say so.
 """
     return [
         {"role": "system", "content": SYSTEM_PROMPT},

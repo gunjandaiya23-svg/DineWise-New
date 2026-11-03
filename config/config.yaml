@@ -57,7 +57,7 @@ models:
   llm: Qwen/Qwen2.5-1.5B-Instruct
 
 generation:
-  max_new_tokens: 256
+  max_new_tokens: 768
 
 workflow:
   max_retries: 1
