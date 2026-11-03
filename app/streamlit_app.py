@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dinewise.config import data_path, load_config  # noqa: E402
+from dinewise.deployment import ensure_assets  # noqa: E402
 from dinewise.graph.workflow import build_graph, run_query  # noqa: E402
 from dinewise.llm.generator import Generator  # noqa: E402
 from dinewise.rag.bm25_index import load_bm25  # noqa: E402
@@ -23,6 +24,7 @@ from dinewise.rag.search import load_retriever  # noqa: E402
 def load_assets():
     cfg = load_config()
     name = cfg["chunking"]["active"]
+    ensure_assets(name)
     restaurants = pd.read_parquet(data_path(cfg, "processed_dir", "restaurants.parquet"))
     chunks = pd.read_parquet(data_path(cfg, "index_dir", "faiss", name, "chunks.parquet"))
     retriever = load_retriever(cfg, name)
@@ -156,8 +158,8 @@ def main() -> None:
                 except Exception:
                     import logging
                     logging.getLogger(__name__).exception("Recommendation failed")
-                    state = {"answer": "I couldn't complete that search. Please try again; "
-                             "if it keeps failing, check the server terminal."}
+                    state = {"answer": "The recommendation service is temporarily unavailable. "
+                             "Please try again later."}
                 render_result(state)
                 st.session_state.messages.append({"role": "assistant", "state": state})
 

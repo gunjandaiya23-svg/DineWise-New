@@ -22,6 +22,8 @@ make rebuild     # Prepare five cities and build C1–C4 FAISS/BM25 indexes
 make app
 ```
 
+For a public CPU demo using Hugging Face inference, follow the [deployment guide](docs/22-deployment.md).
+
 `make rebuild` can take several minutes. Restart Streamlit after a rebuild because it caches loaded resources.
 
 ## What happens to a question

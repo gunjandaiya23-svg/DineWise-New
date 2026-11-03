@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any
 
 import pandas as pd
@@ -40,9 +41,29 @@ class Generator:
         self._model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
         self._model.eval()
 
+    def _generate_hosted(self, query: str, hits: list[dict[str, Any]]) -> str:
+        from huggingface_hub import InferenceClient
+
+        token = os.environ.get("HF_TOKEN")
+        if not token:
+            raise RuntimeError("HF_TOKEN is required for hosted inference")
+        model = os.environ.get("DINEWISE_HF_MODEL", "Qwen/Qwen2.5-72B-Instruct")
+        response = InferenceClient(api_key=token).chat.completions.create(
+            model=model,
+            messages=build_messages(query, hits),
+            max_tokens=int(self.cfg["generation"]["max_new_tokens"]),
+            temperature=0,
+        )
+        content = response.choices[0].message.content
+        if not isinstance(content, str) or not content.strip():
+            raise RuntimeError("Hosted inference returned an empty answer")
+        return content.strip()
+
     def generate(self, query: str, hits: list[dict[str, Any]]) -> str:
         if not self.use_llm:
             return self._template(query, hits)
+        if os.environ.get("DINEWISE_INFERENCE_MODE") == "hf":
+            return self._generate_hosted(query, hits)
         self._load()
         assert self._tokenizer is not None and self._model is not None
         messages = build_messages(query, hits)

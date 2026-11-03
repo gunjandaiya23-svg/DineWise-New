@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,8 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
         cfg_path = ROOT / cfg_path
     with cfg_path.open("r", encoding="utf-8") as handle:
         cfg: dict[str, Any] = yaml.safe_load(handle) or {}
+    if os.environ.get("DINEWISE_INFERENCE_MODE") == "hf":
+        cfg["embedding"]["device"] = "cpu"
     cfg["_root"] = str(ROOT)
     cfg["_config_path"] = str(cfg_path)
     return cfg
