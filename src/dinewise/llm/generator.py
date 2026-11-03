@@ -62,6 +62,8 @@ class Generator:
 
     @staticmethod
     def _template(query: str, hits: list[dict[str, Any]]) -> str:
+        from .prompts import PRICE_LABELS
+
         if not hits:
             return "No restaurant records satisfy the request."
         lines = [
@@ -71,15 +73,30 @@ class Generator:
         for index, hit in enumerate(hits[:3], start=1):
             row = hit["chunk"]
             price = row.get("price_range")
-            price_text = f"{'$' * int(price)}" if pd.notna(price) else "price unknown"
+            try:
+                bucket = int(price)  # type: ignore[arg-type]
+                price_text = (
+                    f"Price: {'$' * bucket} — {PRICE_LABELS[bucket]} "
+                    f"(dataset bucket {bucket} of 4)"
+                    if bucket in PRICE_LABELS
+                    else "price unknown"
+                )
+            except (TypeError, ValueError):
+                price_text = "price unknown"
+            stars = row.get("stars")
+            rating_text = (
+                f"Rating: {stars} out of 5 stars (dataset value)"
+                if pd.notna(stars)
+                else "rating unknown"
+            )
             lines.append(
-                f"{index}. **{row.get('restaurant_name')}** (ID: {row['business_id']}) — "
-                f"{row.get('cuisine_primary')}, {price_text}, "
-                f"rating {row.get('stars')} (dataset value)."
+                f"{index}. **{row.get('restaurant_name')}** — "
+                f"{row.get('cuisine_primary')} in {row.get('city')}. "
+                f"{price_text}. {rating_text}."
             )
             summary = str(row.get("review_summary") or "").strip()
             if summary:
-                lines.append(f"   Evidence: {summary[:220]}")
+                lines.append(f"   Why it matches: {summary[:220]}")
         lines.append("")
         lines.append("Ratings and prices are dataset values, not live information.")
         return "\n".join(lines)

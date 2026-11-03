@@ -18,7 +18,7 @@ Customer review evidence:
 [review-7] 5 stars: The pasta was excellent.
 ```
 
-This is an illustration of the format, not a real restaurant record. The marker is important: the chunker uses it to find restaurant boundaries, and adds the marker to each chunk it produces. A review remains evidence attached to its restaurant; it does not become a separate search document.
+This is an illustration of the format, not a real restaurant record. The marker is important: the chunker uses it to find restaurant boundaries, and adds the marker to each chunk it produces. A review remains evidence attached to its restaurant; it does not become a separate search document. The marker is internal only: generation prompts relabel records as `Record N` with the ID marked never-print, the validator rejects leaked `[RESTAURANT ...]` tags, and the UI strips any leaked markers before display.
 
 ## How evidence is chosen
 

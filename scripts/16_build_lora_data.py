@@ -41,7 +41,10 @@ def _price(value) -> str:
         bucket = int(value)
     except (TypeError, ValueError):
         return "price unknown"
-    return "$" * bucket
+    labels = {1: "Budget-friendly", 2: "Moderate", 3: "Higher-priced", 4: "Most expensive"}
+    if bucket not in labels:
+        return "price unknown"
+    return f"{'$' * bucket} — {labels[bucket]} (dataset bucket {bucket} of 4)"
 
 
 def _record(hit: dict) -> str:
@@ -63,10 +66,16 @@ def _answer(hits: list[dict], reason: str) -> str:
     lines = []
     for index, hit in enumerate(hits[:3], start=1):
         row = hit["chunk"]
+        stars = row.get("stars")
+        rating = (
+            f"Rating: {stars} out of 5 stars (dataset value)"
+            if pd.notna(stars)
+            else "rating unknown"
+        )
         lines.append(
-            f"{index}. **{row.get('restaurant_name')}** (ID: {row['business_id']}) — "
-            f"{row.get('cuisine_primary')}, {_price(row.get('price_range'))}, "
-            f"rating {row.get('stars')} (dataset value). {reason}"
+            f"{index}. **{row.get('restaurant_name')}** — "
+            f"{row.get('cuisine_primary')} in {row.get('city')}. "
+            f"Price: {_price(row.get('price_range'))}. {rating}. {reason}"
         )
     lines.append("Ratings and prices are from a static dataset, not live information.")
     return "\n".join(lines)

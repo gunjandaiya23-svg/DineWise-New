@@ -43,10 +43,19 @@ def render_result(state: dict) -> None:
     # Keep IDs in workflow state for validation and provenance, but hide them in prose.
     display = "\n".join(line for line in answer.splitlines()
                         if "business id" not in line.lower())
+    # Strip internal retrieval markers that older prompts asked the model to echo,
+    # e.g. "[RESTAURANT abc123]" or leftover "[RESTAURANT ]" after ID removal.
+    display = re.sub(r"\[RESTAURANT[^\]]*\]", "", display, flags=re.IGNORECASE)
+    display = re.sub(r"\(\s*ID:\s*[A-Za-z0-9_\-]{10,}\s*\)", "", display)
     for hit in hits:
         identifier = re.escape(str(hit["chunk"]["business_id"]))
         display = re.sub(r"\s*\((?:ID:\s*)?" + identifier + r"\)", "", display)
         display = re.sub(identifier, "", display)
+    # Collapse artefacts left by stripping ("Name  ,", "Name  .", double spaces).
+    display = re.sub(r"[ \t]{2,}", " ", display)
+    display = re.sub(r"\s+,", ",", display)
+    display = re.sub(r"\(\s*\)", "", display)
+    display = re.sub(r"\n{3,}", "\n\n", display).strip()
     st.markdown(display.replace("$", r"\$"))
     recommended = []
     if not state.get("fallback_used"):

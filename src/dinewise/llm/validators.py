@@ -59,6 +59,11 @@ def validate_answer(
             Check("ids_exist", False, f"unknown business ids: {sorted(unknown)[:3]}")
         )
 
+    if re.search(r"\[RESTAURANT", answer, flags=re.IGNORECASE):
+        report.hard_failures.append(
+            Check("no_bracket_tags", False, "answer leaks internal [RESTAURANT ...] tags")
+        )
+
     if not mentioned:
         report.soft_failures.append(
             Check("ids_cited", False, "answer cites no business ids")
